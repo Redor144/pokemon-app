@@ -42,3 +42,14 @@ yarn-error.*
 
 # agent
 .cursor/
+.claude/
+
+# env
+.env
+
+# editors
+.vscode/
+.idea/
+
+# logs
+*.log
