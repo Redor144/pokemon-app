@@ -43,6 +43,8 @@ yarn-error.*
 # agent
 .cursor/
 .claude/
+AGENTS.md
+CLAUDE.md
 
 # env
 .env
