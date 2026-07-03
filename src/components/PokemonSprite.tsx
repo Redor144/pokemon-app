@@ -1,0 +1,41 @@
+import { memo } from 'react';
+import { Image, StyleSheet, View, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
+import { ImageOff } from 'lucide-react-native';
+import { colors, radius } from '@/constants/theme';
+
+type Props = {
+  imageUrl: string;
+  size: number;
+  style?: StyleProp<ImageStyle & ViewStyle>;
+};
+
+function PokemonSprite({ imageUrl, size, style }: Props) {
+  if (imageUrl) {
+    return (
+      <Image
+        source={{ uri: imageUrl }}
+        style={[{ width: size, height: size }, style]}
+        resizeMode="contain"
+      />
+    );
+  }
+
+  const iconSize = Math.round(size * 0.4);
+
+  return (
+    <View style={[styles.placeholder, { width: size, height: size }, style]}>
+      <ImageOff color={colors.mutedForeground} size={iconSize} />
+    </View>
+  );
+}
+
+export default memo(PokemonSprite);
+
+const styles = StyleSheet.create({
+  placeholder: {
+    backgroundColor: colors.muted,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});

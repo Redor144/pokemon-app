@@ -1,66 +1,44 @@
-import { useCallback, useRef, useState, useEffect } from "react";
-import { fetchPokemonPage } from "../lib/pokeapi";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchPokemonPage } from "@/lib/pokeapi";
 import type { PokemonListItem } from "../types/pokemon";
 
 const LIMIT = 20;
 
 export function usePokemonList() {
-    const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetching,
+        isFetchingNextPage,
+        isRefetching,
+        refetch,
+        isError,
+        error,
+    } = useInfiniteQuery({
+        queryKey: ['pokemon', 'list', 'v2'],
+        queryFn: ({ pageParam = 0 }) => fetchPokemonPage(pageParam, LIMIT),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage, _allPages, lastPageParam) => lastPage.hasMore ? lastPageParam + LIMIT : undefined,
+    });
 
-    const loadingMore = useRef(false);
-    const offsetRef = useRef(0);
+    const pokemonList = data?.pages.flatMap((page) => page.items) ?? [];
 
-    const loadPage = useCallback(async (offset: number, append: boolean) => {
-        if (loadingMore.current) return;
-        loadingMore.current = true;
-        setIsLoading(true);
-        try {
-            const { items, hasMore: more } = await fetchPokemonPage(offset, LIMIT);
-            
-            setHasMore(more);
-            offsetRef.current = offset;
-            
-            setPokemonList((prev) => {
-                if (!append) return items;
-                const existingIds = new Set(prev.map(p => p.id));
-                const newItems = items.filter(item => !existingIds.has(item.id));
-                return [...prev, ...newItems];
-            });
-        } catch (error) {
-            console.error("Error loading Pokemon list:", error);
-        } finally {
-            loadingMore.current = false;
-            setIsLoading(false);
-            setIsRefreshing(false);
+    const loadMore = () => {
+        if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
         }
-    }, []);
-
-    useEffect(() => {
-        loadPage(0, false);
-    }, [loadPage]);
-
-
-    const loadMore = useCallback(() => {
-        if (!hasMore || isLoading) return;
-        loadPage(offsetRef.current + LIMIT, true);
-    }, [hasMore, isLoading, loadPage]);
-
-    const refresh = useCallback(async () => {
-        setIsRefreshing(true);
-        offsetRef.current = 0;
-        setHasMore(true);
-        loadPage(0, false);
-    }, [loadPage]);
+    };
 
     return {
         pokemonList,
-        isLoading,
-        isRefreshing,
-        hasMore,
+        isFetchingNextPage,
+        isInitialLoading: isFetching && !data,
+        isRefreshing: isRefetching,
+        hasMore: hasNextPage ?? false,
         loadMore,
-        refresh,
+        refresh: refetch,
+        isError,
+        error,
     };
 }

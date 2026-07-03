@@ -120,16 +120,3 @@ export const colors = {
       color: colors.mutedForeground,
     },
   } as const;
-  
-  export const pokemonTypeColors = {
-    Fire: { color: '#FF6B35', bg: 'rgba(255,107,53,0.15)' },
-    Water: { color: '#4FC3F7', bg: 'rgba(79,195,247,0.15)' },
-    Grass: { color: '#66BB6A', bg: 'rgba(102,187,106,0.15)' },
-    Electric: { color: '#FFCB05', bg: 'rgba(255,203,5,0.15)' },
-    Psychic: { color: '#FF80AB', bg: 'rgba(255,128,171,0.15)' },
-    Normal: { color: '#A0A0B0', bg: 'rgba(160,160,176,0.15)' },
-    Ghost: { color: '#9C6ADE', bg: 'rgba(156,106,222,0.15)' },
-    Bug: { color: '#8BC34A', bg: 'rgba(139,195,74,0.15)' },
-    Flying: { color: '#80DEEA', bg: 'rgba(128,222,234,0.15)' },
-    Poison: { color: '#CE93D8', bg: 'rgba(206,147,216,0.15)' },
-  } as const;

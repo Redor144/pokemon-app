@@ -1,92 +1,78 @@
-import { useCallback, useState } from 'react';
-import {
-  View,
-  FlatList,
-  Pressable,
-  Image,
-  Text,
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-} from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { View, FlatList, ActivityIndicator, Text, type ListRenderItem } from 'react-native';
 import { commonStyles } from '@/styles/common';
-import { spacing } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
 import { usePokemonList } from '@/hooks/usePokemonList';
 import type { PokemonListItem } from '@/types/pokemon';
 import PokemonListRow from '@/components/PokemonListRow';
-
+import PokemonDetailSheet, {
+  type PokemonDetailSheetRef,
+} from '@/components/PokemonDetailSheet';
 
 export default function PokemonListScreen() {
-  const { pokemonList, isLoading, isRefreshing, loadMore, refresh } = usePokemonList();
+  const {
+    pokemonList,
+    isFetchingNextPage,
+    isRefreshing,
+    hasMore,
+    loadMore,
+    refresh,
+  } = usePokemonList();
+  const sheetRef = useRef<PokemonDetailSheetRef>(null);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
 
   const handleRowPress = useCallback((pokemon: PokemonListItem) => {
-    setSelectedPokemon(pokemon);
+    sheetRef.current?.open(pokemon);
   }, []);
+
+  const selectedId = selectedPokemon?.id;
+
+  const keyExtractor = useCallback((item: PokemonListItem) => item.id.toString(), []);
+
+  const renderItem: ListRenderItem<PokemonListItem> = useCallback(
+    ({ item }) => (
+      <PokemonListRow
+        pokemon={item}
+        onPress={handleRowPress}
+        isSelected={selectedId === item.id}
+      />
+    ),
+    [handleRowPress, selectedId],
+  );
+
+  const listFooter = useMemo(() => {
+    if (hasMore && isFetchingNextPage) {
+      return <ActivityIndicator size="large" style={{ margin: spacing.lg }} />;
+    }
+    if (!hasMore && pokemonList.length > 0) {
+      return (
+        <Text style={{ textAlign: 'center', margin: spacing.lg, color: colors.mutedForeground }}>
+          No more Pokémon
+        </Text>
+      );
+    }
+    return null;
+  }, [hasMore, isFetchingNextPage, pokemonList.length]);
 
   return (
     <View style={commonStyles.screen}>
       <FlatList
         data={pokemonList}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
+        extraData={selectedId}
         contentContainerStyle={{ padding: spacing.md }}
-        renderItem={({ item }) => (
-          <PokemonListRow
-            pokemon={item}
-            onPress={handleRowPress}
-            />
-        )}
+        renderItem={renderItem}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         refreshing={isRefreshing}
         onRefresh={refresh}
-        ListFooterComponent={
-          isLoading && !isRefreshing ? (
-            <ActivityIndicator size="large" style={{ margin: spacing.lg }} />
-          ) : null
-        }
+        ListFooterComponent={listFooter}
       />
 
-      <Modal
-        visible={!!selectedPokemon}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSelectedPokemon(null)}
-      >
-        <Pressable style={commonStyles.backdrop} onPress={() => setSelectedPokemon(null)}>
-          <Pressable style={commonStyles.card} onPress={() => {}}>
-            {selectedPokemon && (
-              <>
-                <Image
-                  source={{ uri: selectedPokemon.imageUrl }}
-                  style={styles.modalImage}
-                />
-                <Text style={commonStyles.title}>
-                  #{selectedPokemon.id} - {selectedPokemon.name}
-                </Text>
-              </>
-            )}
-          </Pressable>
-        </Pressable>
-      </Modal>
+      <PokemonDetailSheet
+        ref={sheetRef}
+        onSelectionChange={setSelectedPokemon}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  thumbnail: {
-    width: 48,
-    height: 48,
-    marginRight: spacing.md,
-  },
-  rowText: {
-    color: "#ffffff",
-    fontSize: 18,
-    textTransform: 'capitalize',
-    flex: 1,
-  },
-  modalImage: {
-    width: 120,
-    height: 120,
-  },
-});
