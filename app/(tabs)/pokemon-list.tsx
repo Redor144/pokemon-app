@@ -1,177 +1,92 @@
-import { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, FlatList, ActivityIndicator, Pressable, Modal, Image } from 'react-native';
+import { useCallback, useState } from 'react';
+import {
+  View,
+  FlatList,
+  Pressable,
+  Image,
+  Text,
+  ActivityIndicator,
+  Modal,
+  StyleSheet,
+} from 'react-native';
+import { commonStyles } from '@/styles/common';
+import { spacing } from '@/constants/theme';
+import { usePokemonList } from '@/hooks/usePokemonList';
+import type { PokemonListItem } from '@/types/pokemon';
+import PokemonListRow from '@/components/PokemonListRow';
 
-interface PokemonListItem {
-    name: string;
-    url: string;
-    id: number;
-    imageUrl: string;
-}
 
 export default function PokemonListScreen() {
-    const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
-    const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const { pokemonList, isLoading, isRefreshing, loadMore, refresh } = usePokemonList();
+  const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
 
-    const loadingMoreRef = useRef(false);
-    const offsetRef = useRef(0);
-
-
-    const LIMIT = 20;
-
-    useEffect(() => {
-        fetchPokemon(0, false);
-    }, []);
-
-    const fetchPokemon = async (currentOffset: number, append: boolean) => {
-        if (loadingMoreRef.current) return;
-        loadingMoreRef.current = true;
-        setIsLoading(true);
-
-        try {
-            const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}&offset=${currentOffset}`)
-            const data = await response.json();
-
-            const formattedResults: PokemonListItem[] = data.results.map((item: any) => {
-                const urlParts = item.url.split('/');
-                const id = parseInt(urlParts[urlParts.length - 2], 10);
-                return {
-                    name: item.name,
-                    url: item.url,
-                    id: id,
-                    imageUrl: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
-                };
-            });
-
-            if (append) {
-                setPokemonList((prev) => {
-                    const existingIds = new Set(prev.map((p) => p.id));
-                    const newItems = formattedResults.filter((p) => !existingIds.has(p.id));
-                    return [...prev, ...newItems];
-                });
-            } else {
-                setPokemonList(formattedResults);
-            }
-        } catch (error) {
-            console.error("Error fetching Pokémon list: ", error);
-        } finally {
-            loadingMoreRef.current = false;
-            offsetRef.current = currentOffset;
-            setIsLoading(false);
-            setIsRefreshing(false);
-        }
-    }
+  const handleRowPress = useCallback((pokemon: PokemonListItem) => {
+    setSelectedPokemon(pokemon);
+  }, []);
 
   return (
-    <View style={styles.list}>
-        <FlatList
-            data={pokemonList}
-            keyExtractor={(item) => item.id.toString()}
+    <View style={commonStyles.screen}>
+      <FlatList
+        data={pokemonList}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ padding: spacing.md }}
+        renderItem={({ item }) => (
+          <PokemonListRow
+            pokemon={item}
+            onPress={handleRowPress}
+            />
+        )}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        refreshing={isRefreshing}
+        onRefresh={refresh}
+        ListFooterComponent={
+          isLoading && !isRefreshing ? (
+            <ActivityIndicator size="large" style={{ margin: spacing.lg }} />
+          ) : null
+        }
+      />
 
-            renderItem={({ item }) => (
-                <Pressable onPress={() => setSelectedPokemon(item)}>
-                    <View style={styles.row}>
-                        <Image
-                            source={{ uri: item.imageUrl }}
-                            style={styles.thumbnail}
-                            resizeMode="contain"
-                        />
-                        <Text style={styles.rowText}>
-                            #{item.id} - {item.name}
-                        </Text>
-                    </View>
-                </Pressable>
+      <Modal
+        visible={!!selectedPokemon}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedPokemon(null)}
+      >
+        <Pressable style={commonStyles.backdrop} onPress={() => setSelectedPokemon(null)}>
+          <Pressable style={commonStyles.card} onPress={() => {}}>
+            {selectedPokemon && (
+              <>
+                <Image
+                  source={{ uri: selectedPokemon.imageUrl }}
+                  style={styles.modalImage}
+                />
+                <Text style={commonStyles.title}>
+                  #{selectedPokemon.id} - {selectedPokemon.name}
+                </Text>
+              </>
             )}
-
-            onEndReached={() => {
-                const nextOffset = offsetRef.current + LIMIT;
-                fetchPokemon(nextOffset, true);
-            }}
-            onEndReachedThreshold={0.5}
-            
-            refreshing={isRefreshing}
-            onRefresh={() => {
-                setIsRefreshing(true);
-                offsetRef.current = 0;
-                fetchPokemon(0, false);
-            }}
-
-            ListFooterComponent={
-                isLoading && !isRefreshing ? (
-                    <ActivityIndicator size="large" style={{ margin: 15 }} />
-                ) : null
-            }
-        />
-        <Modal
-            visible={!!selectedPokemon}
-            transparent
-            animationType="fade"
-            onRequestClose={() => setSelectedPokemon(null)}
-        >
-            <Pressable style={styles.backdrop} onPress={() => setSelectedPokemon(null)}>
-                <Pressable style={styles.card} onPress={() => {}}>
-                    {selectedPokemon && (
-                        <>
-                            <Image source={{ uri: selectedPokemon.imageUrl }} style={{ width: 120, height: 120 }}/>
-                            <Text style={styles.title}>
-                                #{selectedPokemon.id} - {selectedPokemon.name} 
-                            </Text>
-                        </>
-                    )}
-                </Pressable>
-            </Pressable>
-
-        </Modal>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  list: {
-    flex: 1,
-    padding: 10
-  },
-  text: {
-    textAlign: 'center',
-    marginVertical: 10
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 24,
-    width: '100%',
-    maxWidth: 300,
-    alignItems: 'center'
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: '600',
-    marginTop: 12,
-    textTransform: 'capitalize'
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderBottomWidth: 1,
-    borderColor: '#eee'
-  },
   thumbnail: {
     width: 48,
     height: 48,
-    marginRight: 12,
+    marginRight: spacing.md,
   },
   rowText: {
+    color: "#ffffff",
     fontSize: 18,
     textTransform: 'capitalize',
-    flex: 1
-  }
+    flex: 1,
+  },
+  modalImage: {
+    width: 120,
+    height: 120,
+  },
 });
