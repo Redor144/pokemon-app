@@ -1,7 +1,8 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { View, FlatList, ActivityIndicator, Text, type ListRenderItem } from 'react-native';
 import { commonStyles } from '@/styles/common';
-import { colors, spacing } from '@/constants/theme';
+import { spacing } from '@/constants/theme';
+import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
 import { usePokemonList } from '@/hooks/usePokemonList';
 import type { PokemonListItem } from '@/types/pokemon';
 import PokemonListRow from '@/components/PokemonListRow';
@@ -18,6 +19,7 @@ export default function PokemonListScreen() {
     loadMore,
     refresh,
   } = usePokemonList();
+  const { favorite } = useFavoritePokemon();
   const sheetRef = useRef<PokemonDetailSheetRef>(null);
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
 
@@ -26,6 +28,7 @@ export default function PokemonListScreen() {
   }, []);
 
   const selectedId = selectedPokemon?.id;
+  const favoriteId = favorite?.id;
 
   const keyExtractor = useCallback((item: PokemonListItem) => item.id.toString(), []);
 
@@ -35,9 +38,10 @@ export default function PokemonListScreen() {
         pokemon={item}
         onPress={handleRowPress}
         isSelected={selectedId === item.id}
+        isFavorite={favoriteId === item.id}
       />
     ),
-    [handleRowPress, selectedId],
+    [handleRowPress, selectedId, favoriteId],
   );
 
   const listFooter = useMemo(() => {
@@ -45,11 +49,7 @@ export default function PokemonListScreen() {
       return <ActivityIndicator size="large" style={{ margin: spacing.lg }} />;
     }
     if (!hasMore && pokemonList.length > 0) {
-      return (
-        <Text style={{ textAlign: 'center', margin: spacing.lg, color: colors.mutedForeground }}>
-          No more Pokémon
-        </Text>
-      );
+      return <Text style={commonStyles.footerCaption}>No more Pokémon</Text>;
     }
     return null;
   }, [hasMore, isFetchingNextPage, pokemonList.length]);
@@ -59,8 +59,8 @@ export default function PokemonListScreen() {
       <FlatList
         data={pokemonList}
         keyExtractor={keyExtractor}
-        extraData={selectedId}
-        contentContainerStyle={{ padding: spacing.md }}
+        extraData={[selectedId, favoriteId]}
+        contentContainerStyle={commonStyles.listContent}
         renderItem={renderItem}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}

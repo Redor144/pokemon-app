@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, type ColorValue, Animated } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import type { LucideIcon } from 'lucide-react-native';
-import { colors, fonts } from '@/constants/theme';
+import { colors, typography } from '@/constants/theme';
 import { useRef, useEffect } from 'react';
 
 const ICON_SIZE = 22;
@@ -87,9 +87,8 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
   },
   label: {
+    ...typography.tabLabel,
     marginTop: 2,
-    fontFamily: fonts.nunitoSemiBold,
-    fontSize: 11,
   },
   dotSlot: {
     height: DOT_SIZE + 4,

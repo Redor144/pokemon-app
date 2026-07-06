@@ -20,6 +20,7 @@ export const colors = {
     inputBackground: '#1e1e35',
     ring: '#ffcb05',
     overlay: 'rgba(0, 0, 0, 0.5)',
+    stat: '#ff5f36',
   } as const;
   
   export const fontFamilies = {
@@ -118,5 +119,23 @@ export const colors = {
       fontSize: 9,
       lineHeight: 12,
       color: colors.mutedForeground,
+    },
+    pokemonId: {
+      fontFamily: fonts.dmMonoRegular,
+      fontSize: 11,
+      lineHeight: 14,
+      color: colors.mutedForeground,
+    },
+    pokemonName: {
+      fontFamily: fonts.nunitoBold,
+      fontSize: 16,
+      lineHeight: 20,
+      color: colors.foreground,
+    },
+    pokemonNameLarge: {
+      fontFamily: fonts.nunitoBold,
+      fontSize: 24,
+      lineHeight: 28,
+      color: colors.foreground,
     },
   } as const;

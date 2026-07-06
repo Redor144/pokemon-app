@@ -1,17 +1,10 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View } from 'react-native';
+import { commonStyles } from '@/styles/common';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.centerContent}>
       <Text>Map</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
