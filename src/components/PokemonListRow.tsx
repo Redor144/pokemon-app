@@ -6,6 +6,7 @@ import type { PokemonListItem } from '@/types/pokemon';
 import { Heart } from 'lucide-react-native';
 import PokemonSprite from '@/components/PokemonSprite';
 import TypeBadge from '@/components/TypeBadge';
+import StatProgressBar from './StatProgressBar';
 
 const MAX_HP = 255;
 
@@ -44,9 +45,7 @@ function PokemonListRow({ pokemon, onPress, isFavorite, isSelected }: Props) {
         <View style={styles.right}>
           <View style={styles.hpBlock}>
             <Text style={styles.hpLabel}>HP {pokemon.hp}</Text>
-            <View style={[commonStyles.progressTrack, commonStyles.progressTrackSm]}>
-              <View style={[commonStyles.progressFill, { width: `${hpPercent * 100}%` }]} />
-            </View>
+            <StatProgressBar percent={hpPercent} />
           </View>
         </View>
       </View>
@@ -70,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
   },
-  hpBlock: { width: 72 },
+  hpBlock: { width: 72, gap: spacing.md },
   hpLabel: {
     ...typography.mono,
     marginBottom: spacing.xs,

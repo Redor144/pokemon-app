@@ -10,6 +10,7 @@ export const colors = {
     muted: '#1e1e35',
     mutedForeground: '#8888aa',
     border: 'rgba(255, 203, 5, 0.15)',
+    secondaryBorder: 'rgba(204, 0, 0, 0.15)',
   
     popover: '#1e1e35',
     popoverForeground: '#f0f0f5',
@@ -75,7 +76,7 @@ export const colors = {
   export const typography = {
     screenTitle: {
       fontFamily: fonts.nunitoBlack,
-      fontSize: 20,
+      fontSize: 22,
       lineHeight: 24,
       color: colors.foreground,
     },
@@ -98,7 +99,7 @@ export const colors = {
       color: colors.foreground,
     },
     caption: {
-      fontFamily: fonts.dmSansRegular,
+      fontFamily: fonts.nunitoBold,
       fontSize: 12,
       lineHeight: 16,
       color: colors.mutedForeground,
@@ -121,7 +122,7 @@ export const colors = {
       color: colors.mutedForeground,
     },
     pokemonId: {
-      fontFamily: fonts.dmMonoRegular,
+      fontFamily: fonts.dmMonoMedium,
       fontSize: 11,
       lineHeight: 14,
       color: colors.mutedForeground,

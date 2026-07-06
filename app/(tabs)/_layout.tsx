@@ -1,9 +1,27 @@
 import { Tabs } from 'expo-router';
-import { colors, fonts } from '@/constants/theme';
+import { colors } from '@/constants/theme';
 import { tabBarNavOptions } from '@/components/tabBarOptions';
 import { List, Heart, Camera, Map } from 'lucide-react-native';
+import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black } from '@expo-google-fonts/nunito';
+import { DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold } from '@expo-google-fonts/dm-sans';
+import { DMMono_400Regular, DMMono_500Medium } from '@expo-google-fonts/dm-mono';
 
 export default function TabsLayout() {
+  const [loaded] = useFonts({
+    Nunito_400Regular,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
+    Nunito_900Black,
+    DMSans_400Regular,
+    DMSans_500Medium,
+    DMSans_600SemiBold,
+    DMMono_400Regular,
+    DMMono_500Medium,
+  });
+
+  if (!loaded) return null;
+
   return (
     <Tabs
       screenOptions={{
@@ -24,20 +42,22 @@ export default function TabsLayout() {
           borderBottomColor: colors.border,
           borderBottomWidth: 1,
         },
-        headerTitleStyle: {
-          color: colors.foreground,
-          fontFamily: fonts.nunitoSemiBold,
-        },
+        headerTitleAlign: 'left',
         headerTintColor: colors.primary,
       }}
     >
       <Tabs.Screen
         name="index"
-        options={tabBarNavOptions('Favorite', Heart, 'favorite')}
+        options={tabBarNavOptions('Favorite', Heart, 'favorite', {
+          filled: true,
+          header: { title: 'Favorite Pokémon', subtitle: 'My collection' },
+        })}
       />
       <Tabs.Screen
         name="pokemon-list"
-        options={tabBarNavOptions('Pokédex', List, 'pokedex')}
+        options={tabBarNavOptions('Pokédex', List, 'pokedex', {
+          header: { title: 'Pokédex', subtitle: 'Gotta catch \'em all', showIcon: false },
+        })}
       />
       <Tabs.Screen
         name="camera"

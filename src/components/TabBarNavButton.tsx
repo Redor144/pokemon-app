@@ -14,6 +14,7 @@ type Props = {
   focused: boolean;
   color: ColorValue;
   flareId: string;
+  filled?: boolean;
 };
 
 export function TabBarNavButton({
@@ -22,6 +23,7 @@ export function TabBarNavButton({
   focused,
   color,
   flareId,
+  filled = false,
 }: Props) {
   const half = FLARE_SIZE / 2;
   const scale = useRef(new Animated.Value(focused ? 1.1 : 1)).current;
@@ -55,7 +57,7 @@ export function TabBarNavButton({
           </Svg>
         ) : null}
         <Animated.View style={{ transform: [{ scale: scale }] }}>
-          <Icon color={color} size={ICON_SIZE} />
+          <Icon color={color} size={ICON_SIZE} fill={filled ? color : 'transparent'}/>
         </Animated.View>
       </View>
 

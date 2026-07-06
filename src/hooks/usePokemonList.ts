@@ -1,6 +1,5 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchPokemonPage } from "@/lib/pokeapi";
-import type { PokemonListItem } from "../types/pokemon";
 
 const LIMIT = 20;
 

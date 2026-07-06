@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { Image, StyleSheet, View, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
+import { Image } from 'expo-image';
 import { ImageOff } from 'lucide-react-native';
 import { colors, radius } from '@/constants/theme';
 
@@ -15,7 +16,7 @@ function PokemonSprite({ imageUrl, size, style }: Props) {
       <Image
         source={{ uri: imageUrl }}
         style={[{ width: size, height: size }, style]}
-        resizeMode="contain"
+        contentFit="contain"
       />
     );
   }

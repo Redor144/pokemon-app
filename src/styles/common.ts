@@ -28,7 +28,7 @@ export const commonStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    borderBottomWidth: 1,
+    borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.card,
     borderRadius: radius.lg,
@@ -92,7 +92,7 @@ export const commonStyles = StyleSheet.create({
   primaryButton: {
     width: '100%',
     backgroundColor: colors.primary,
-    borderRadius: radius.full,
+    borderRadius: radius.xl,
     paddingVertical: spacing.md,
     alignItems: 'center',
   },

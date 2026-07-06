@@ -2,55 +2,48 @@ import {
   createContext,
   useCallback,
   useContext,
-  useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FAVORITE_KEY, storage } from '@/lib/storage';
 import type { FavoritePokemon } from '@/types/pokemon';
 
-const FAVORITE_KEY = 'fav-poke';
+function readFavorite(): FavoritePokemon | null {
+  try {
+    const raw = storage.getString(FAVORITE_KEY);
+    return raw ? (JSON.parse(raw) as FavoritePokemon) : null;
+  } catch (error) {
+    console.error('Error loading favorite Pokemon:', error);
+    return null;
+  }
+}
 
 type FavoritePokemonContextValue = {
   favorite: FavoritePokemon | null;
-  isLoading: boolean;
   isFavorite: (id: number) => boolean;
-  addFavoritePokemon: (pokemon: FavoritePokemon) => Promise<void>;
-  clearFavoritePokemon: () => Promise<void>;
-  reload: () => Promise<void>;
+  addFavoritePokemon: (pokemon: FavoritePokemon) => void;
+  clearFavoritePokemon: () => void;
+  reload: () => void;
 };
 
 const FavoritePokemonContext = createContext<FavoritePokemonContextValue | null>(null);
 
 export function FavoritePokemonProvider({ children }: { children: ReactNode }) {
-  const [favorite, setFavorite] = useState<FavoritePokemon | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [favorite, setFavorite] = useState<FavoritePokemon | null>(readFavorite);
 
-  const loadFavorite = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const raw = await AsyncStorage.getItem(FAVORITE_KEY);
-      setFavorite(raw ? JSON.parse(raw) : null);
-    } catch (error) {
-      console.error('Error loading favorite Pokemon:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const reload = useCallback(() => {
+    setFavorite(readFavorite());
   }, []);
 
-  useEffect(() => {
-    loadFavorite();
-  }, [loadFavorite]);
-
-  const addFavoritePokemon = useCallback(async (pokemon: FavoritePokemon) => {
+  const addFavoritePokemon = useCallback((pokemon: FavoritePokemon) => {
     setFavorite(pokemon);
-    await AsyncStorage.setItem(FAVORITE_KEY, JSON.stringify(pokemon));
+    storage.set(FAVORITE_KEY, JSON.stringify(pokemon));
   }, []);
 
-  const clearFavoritePokemon = useCallback(async () => {
+  const clearFavoritePokemon = useCallback(() => {
     setFavorite(null);
-    await AsyncStorage.removeItem(FAVORITE_KEY);
+    storage.remove(FAVORITE_KEY);
   }, []);
 
   const isFavorite = useCallback(
@@ -61,20 +54,12 @@ export function FavoritePokemonProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       favorite,
-      isLoading,
       isFavorite,
       addFavoritePokemon,
       clearFavoritePokemon,
-      reload: loadFavorite,
+      reload,
     }),
-    [
-      favorite,
-      isLoading,
-      isFavorite,
-      addFavoritePokemon,
-      clearFavoritePokemon,
-      loadFavorite,
-    ],
+    [favorite, isFavorite, addFavoritePokemon, clearFavoritePokemon, reload],
   );
 
   return (

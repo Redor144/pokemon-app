@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { View, FlatList, ActivityIndicator, Text, type ListRenderItem } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
+import { FlashList, type ListRenderItem } from '@shopify/flash-list';
 import { commonStyles } from '@/styles/common';
 import { spacing } from '@/constants/theme';
 import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
@@ -56,7 +57,7 @@ export default function PokemonListScreen() {
 
   return (
     <View style={commonStyles.screen}>
-      <FlatList
+      <FlashList
         data={pokemonList}
         keyExtractor={keyExtractor}
         extraData={[selectedId, favoriteId]}
