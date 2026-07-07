@@ -15,19 +15,31 @@ type Props = {
   onPress: (pokemon: PokemonListItem) => void;
   isFavorite?: boolean;
   isSelected?: boolean;
+  disabled?: boolean;
+  disabledLabel?: string;
 };
 
 function formatId(id: number): string {
   return `#${String(id).padStart(3, '0')}`;
 }
 
-function PokemonListRow({ pokemon, onPress, isFavorite, isSelected }: Props) {
+function PokemonListRow({
+  pokemon,
+  onPress,
+  isFavorite,
+  isSelected,
+  disabled,
+  disabledLabel,
+}: Props) {
   const hpPercent = Math.min(pokemon.hp / MAX_HP, 1);
-  const handlePress = useCallback(() => onPress(pokemon), [onPress, pokemon]);
+  const handlePress = useCallback(() => {
+    if (disabled) return;
+    onPress(pokemon);
+  }, [disabled, onPress, pokemon]);
 
   return (
-    <Pressable onPress={handlePress}>
-      <View style={[commonStyles.row, isSelected && styles.selected]}>
+    <Pressable onPress={handlePress} disabled={disabled}>
+      <View style={[commonStyles.row, isSelected && styles.selected, disabled && styles.disabled]}>
         <PokemonSprite imageUrl={pokemon.imageUrl} size={56} />
         <View style={styles.info}>
           <View style={styles.nameRow}>
@@ -35,11 +47,15 @@ function PokemonListRow({ pokemon, onPress, isFavorite, isSelected }: Props) {
             {isFavorite && <Heart color={colors.primary} size={14} fill={colors.primary} />}
           </View>
           <Text style={typography.pokemonId}>{formatId(pokemon.id)}</Text>
-          <View style={[commonStyles.typeRow, styles.typeRow]}>
-            {pokemon.types.map((type) => (
-              <TypeBadge key={type} type={type} />
-            ))}
-          </View>
+          {disabled && disabledLabel ? (
+            <Text style={styles.disabledLabel}>{disabledLabel}</Text>
+          ) : (
+            <View style={[commonStyles.typeRow, styles.typeRow]}>
+              {pokemon.types.map((type) => (
+                <TypeBadge key={type} type={type} />
+              ))}
+            </View>
+          )}
         </View>
 
         <View style={styles.right}>
@@ -59,6 +75,14 @@ const styles = StyleSheet.create({
   selected: {
     borderWidth: 2,
     borderColor: colors.ring,
+  },
+  disabled: {
+    opacity: 0.45,
+  },
+  disabledLabel: {
+    ...typography.caption,
+    marginTop: spacing.xs,
+    color: colors.mutedForeground,
   },
   info: { flex: 1, gap: 2 },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },

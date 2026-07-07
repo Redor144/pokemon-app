@@ -3,21 +3,26 @@ import { fetchPokemonPage } from "@/lib/pokeapi";
 
 const LIMIT = 20;
 
-export function usePokemonList() {
+type Options = {
+  enabled?: boolean;
+};
+
+export function usePokemonList({ enabled = true }: Options = {}) {
     const {
         data,
         fetchNextPage,
         hasNextPage,
         isFetching,
         isFetchingNextPage,
+        isLoading,
         isRefetching,
         refetch,
         isError,
-        error,
     } = useInfiniteQuery({
         queryKey: ['pokemon', 'list', 'v2'],
         queryFn: ({ pageParam = 0 }) => fetchPokemonPage(pageParam, LIMIT),
         initialPageParam: 0,
+        enabled,
         getNextPageParam: (lastPage, _allPages, lastPageParam) => lastPage.hasMore ? lastPageParam + LIMIT : undefined,
     });
 
@@ -32,12 +37,11 @@ export function usePokemonList() {
     return {
         pokemonList,
         isFetchingNextPage,
-        isInitialLoading: isFetching && !data,
+        isInitialLoading: isLoading || (isFetching && !data),
         isRefreshing: isRefetching,
         hasMore: hasNextPage ?? false,
         loadMore,
         refresh: refetch,
         isError,
-        error,
     };
 }

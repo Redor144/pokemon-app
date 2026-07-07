@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react-native';
 import { View, StyleSheet, type ColorValue } from 'react-native';
 import { TabBarNavButton } from '@/components/TabBarNavButton';
-import { TabHeaderTitle } from '@/components/TabHeaderTitle';
+import { TabScreenHeader, type TabScreenHeaderOptions } from '@/components/TabScreenHeader';
 import { colors, spacing } from '@/constants/theme';
 
 const HEADER_ICON_SIZE = 18;
@@ -78,10 +78,11 @@ export function tabBarNavOptions(
 
   return {
     title: headerTitle,
-    headerTitle: () => (
-      <TabHeaderTitle
+    header: (props: { options: TabScreenHeaderOptions }) => (
+      <TabScreenHeader
         title={headerTitle}
         subtitle={options?.header?.subtitle}
+        options={props.options}
       />
     ),
     headerRight: showHeaderIcon ? () => (
@@ -114,7 +115,6 @@ export function tabBarNavOptions(
 const styles = StyleSheet.create({
   headerIcon: {
     marginRight: spacing.lg,
-    paddingBottom: spacing.lg,
   },
   circle: {
     width: CIRCLE_SIZE,

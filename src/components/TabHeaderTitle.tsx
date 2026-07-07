@@ -25,8 +25,6 @@ export function TabHeaderTitle({ title, subtitle }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    paddingBottom: spacing.xl,
-    paddingTop: spacing.xs,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,

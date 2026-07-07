@@ -25,6 +25,8 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
+        freezeOnBlur: true,
+        lazy: true,
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
@@ -37,13 +39,6 @@ export default function TabsLayout() {
           height: 80,
         },
         headerShown: true,
-        headerStyle: {
-          backgroundColor: colors.background,
-          borderBottomColor: colors.border,
-          borderBottomWidth: 1,
-        },
-        headerTitleAlign: 'left',
-        headerTintColor: colors.primary,
       }}
     >
       <Tabs.Screen
@@ -65,7 +60,9 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="map"
-        options={tabBarNavOptions('Map', Map, 'map')}
+        options={tabBarNavOptions('Map', Map, 'map', {
+          header: { title: 'Map', subtitle: 'Pokémon World', showIcon: false },
+        })}
       />
     </Tabs>
   );

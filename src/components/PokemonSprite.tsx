@@ -8,15 +8,18 @@ type Props = {
   imageUrl: string;
   size: number;
   style?: StyleProp<ImageStyle & ViewStyle>;
+  onLoad?: () => void;
 };
 
-function PokemonSprite({ imageUrl, size, style }: Props) {
+function PokemonSprite({ imageUrl, size, style, onLoad }: Props) {
   if (imageUrl) {
     return (
       <Image
         source={{ uri: imageUrl }}
         style={[{ width: size, height: size }, style]}
         contentFit="contain"
+        onLoad={onLoad}
+        onLoadEnd={onLoad}
       />
     );
   }
