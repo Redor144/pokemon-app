@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { commonStyles } from '@/styles/common';
 import { colors, spacing, typography } from '@/constants/theme';
+import { HP_LABEL } from '@/constants/pokemonStats';
 import type { PokemonListItem } from '@/types/pokemon';
 import { Heart } from 'lucide-react-native';
 import PokemonSprite from '@/components/PokemonSprite';
@@ -60,7 +61,7 @@ function PokemonListRow({
 
         <View style={styles.right}>
           <View style={styles.hpBlock}>
-            <Text style={styles.hpLabel}>HP {pokemon.hp}</Text>
+            <Text style={styles.hpLabel}>{HP_LABEL} {pokemon.hp}</Text>
             <StatProgressBar percent={hpPercent} />
           </View>
         </View>

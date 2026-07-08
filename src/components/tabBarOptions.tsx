@@ -10,12 +10,9 @@ const CIRCLE_SIZE = 36;
 type TabHeaderIconVariant = 'primary' | 'secondary';
 
 type TabHeaderConfig = {
-  title?: string;
-  subtitle?: string;
+  title: string;
+  subtitle: string;
   icon?: LucideIcon;
-  iconFilled?: boolean;
-  iconVariant?: TabHeaderIconVariant;
-  showIcon?: boolean;
 };
 
 const headerIconCircle = {
@@ -56,7 +53,7 @@ export function TabHeaderIcon({
         <Icon
           size={HEADER_ICON_SIZE}
           color={circle.color}
-          fill={filled ? circle.color : 'transparent'}
+          fill={filled ? circle.color : undefined}
         />
       </View>
     </View>
@@ -66,30 +63,23 @@ export function TabHeaderIcon({
 export function tabBarNavOptions(
   label: string,
   icon: LucideIcon,
-  flareId: string,
-  options?: { filled?: boolean; header?: TabHeaderConfig },
+  header: TabHeaderConfig,
+  options?: { filled?: boolean },
 ) {
-  const headerTitle = options?.header?.title ?? label;
-  const headerIcon = options?.header?.icon ?? icon;
-  const headerIconFilled = options?.header?.iconFilled ?? options?.filled ?? false;
-  const headerIconVariant =
-    options?.header?.iconVariant ?? (headerIconFilled ? 'secondary' : 'primary');
-  const showHeaderIcon = options?.header?.showIcon ?? true;
-
   return {
-    title: headerTitle,
+    title: header.title,
     header: (props: { options: TabScreenHeaderOptions }) => (
       <TabScreenHeader
-        title={headerTitle}
-        subtitle={options?.header?.subtitle}
+        title={header.title}
+        subtitle={header.subtitle}
         options={props.options}
       />
     ),
-    headerRight: showHeaderIcon ? () => (
+    headerRight: header.icon ? () => (
       <TabHeaderIcon
-        icon={headerIcon}
-        filled={headerIconFilled}
-        variant={headerIconVariant}
+        icon={header.icon!}
+        filled={options?.filled ?? false}
+        variant={options?.filled ? 'secondary' : 'primary'}
       />
     ) :undefined,
     tabBarIcon: ({
@@ -105,7 +95,6 @@ export function tabBarNavOptions(
         icon={icon}
         focused={focused}
         color={color}
-        flareId={flareId}
         filled={options?.filled ?? false}
       />
     ),

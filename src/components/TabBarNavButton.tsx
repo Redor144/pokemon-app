@@ -13,7 +13,6 @@ type Props = {
   icon: LucideIcon;
   focused: boolean;
   color: ColorValue;
-  flareId: string;
   filled?: boolean;
 };
 
@@ -22,10 +21,10 @@ export function TabBarNavButton({
   icon: Icon,
   focused,
   color,
-  flareId,
   filled = false,
 }: Props) {
   const half = FLARE_SIZE / 2;
+  const flareId = `flare-${label}`;
   const scale = useRef(new Animated.Value(focused ? 1.1 : 1)).current;
 
   useEffect(() => {

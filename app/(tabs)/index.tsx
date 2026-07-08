@@ -1,5 +1,4 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, Text, View } from 'react-native';
 import { Heart } from 'lucide-react-native';
 import { commonStyles } from '@/styles/common';
 import { colors, fonts, radius, spacing, typography } from '@/constants/theme';
@@ -9,10 +8,13 @@ import { useLayoutEffect } from 'react';
 import { useNavigation } from 'expo-router';
 import { TabHeaderIcon } from '@/components/tabBarOptions';
 
+const NO_FAVORITE_TITLE = 'No favorite yet';
+const NO_FAVORITE_CAPTION = 'Open the Pokédex and set a Pokémon as your favorite.';
+
+const REMOVE_FAVORITE_LABEL = 'Remove Favorite';
 
 export default function FavoriteScreen() {
   const { favorite, clearFavoritePokemon } = useFavoritePokemon();
-  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   
   useLayoutEffect(() => {
@@ -27,9 +29,9 @@ export default function FavoriteScreen() {
     return (
       <View style={commonStyles.centered}>
         <Heart color={colors.mutedForeground} size={40} />
-        <Text style={styles.emptyTitle}>No favorite yet</Text>
+        <Text style={styles.emptyTitle}>{NO_FAVORITE_TITLE}</Text>
         <Text style={styles.emptyCaption}>
-          Open the Pokédex and set a Pokémon as your favorite.
+          {NO_FAVORITE_CAPTION}
         </Text>
       </View>
     );
@@ -37,25 +39,18 @@ export default function FavoriteScreen() {
 
   return (
     <View style={commonStyles.screen}>
-      <ScrollView
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + spacing.xl },
-        ]}
-      >
-        <View style={styles.card}>
-          <View style={commonStyles.sheetContent}>
-            <PokemonDetailContent
-              pokemon={favorite}
-              action={{
-                label: 'Remove Favorite',
-                onPress: clearFavoritePokemon,
-                variant: 'destructive',
-              }}
-            />
-          </View>
+      <View style={styles.card}>
+        <View style={commonStyles.sheetContent}>
+          <PokemonDetailContent
+            pokemon={favorite}
+            action={{
+              label: REMOVE_FAVORITE_LABEL,
+              onPress: clearFavoritePokemon,
+              variant: 'destructive',
+            }}
+          />
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -73,6 +68,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden',
     paddingBottom: spacing.xl,
+    marginTop: spacing.xl,
+    marginHorizontal: spacing.md,
   },
   emptyTitle: {
     ...typography.heading,

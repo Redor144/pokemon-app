@@ -21,6 +21,9 @@ export const colors = {
     inputBackground: '#1e1e35',
     ring: '#ffcb05',
     overlay: 'rgba(0, 0, 0, 0.5)',
+    controlBackground: 'rgba(255, 255, 255, 0.08)',
+    controlBorder: 'rgba(255, 255, 255, 0.18)',
+    controlRing: 'rgba(255, 255, 255, 0.35)',
     stat: '#ff5f36',
   } as const;
   

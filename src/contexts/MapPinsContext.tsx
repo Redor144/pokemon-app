@@ -6,7 +6,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { Image } from 'expo-image';
 import { MAP_PINS_KEY, storage } from '@/lib/storage';
 import type { MapPin } from '@/types/mapPin';
 import type { PokemonListItem } from '@/types/pokemon';
@@ -69,20 +68,12 @@ export function MapPinsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const assignPokemon = useCallback((pinId: string, pokemon: PokemonListItem) => {
-    void Image.prefetch(pokemon.imageUrl).finally(() => {
-      setPins((current) => {
-        const next = current.map((pin) => {
-          if (pin.id === pinId) {
-            return { ...pin, pokemon };
-          }
-          if (pin.pokemon?.id === pokemon.id) {
-            return { ...pin, pokemon: null };
-          }
-          return pin;
-        });
-        saveMapPins(next);
-        return next;
-      });
+    setPins((current) => {
+      const next = current.map((pin) =>
+        pin.id === pinId ? { ...pin, pokemon } : pin,
+      );
+      saveMapPins(next);
+      return next;
     });
   }, []);
 

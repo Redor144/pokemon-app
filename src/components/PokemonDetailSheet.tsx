@@ -1,7 +1,9 @@
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -25,12 +27,22 @@ type Props = {
 const CLOSED_INDEX = 0;
 const OPEN_INDEX = 1;
 
+const ALREADY_FAVORITE_LABEL = 'Already your Favorite';
+const SET_AS_FAVORITE_LABEL = 'Set as Favorite';
+
 const PokemonDetailSheet = forwardRef<PokemonDetailSheetRef, Props>(
   ({ onSelectionChange }, ref) => {
     const insets = useSafeAreaInsets();
-    const [index, setIndex] = useState(CLOSED_INDEX);
+    const indexRef = useRef(CLOSED_INDEX);
+    const [index, setIndexState] = useState(CLOSED_INDEX);
+    const [openRequest, setOpenRequest] = useState(0);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
     const { isFavorite, addFavoritePokemon } = useFavoritePokemon();
+
+    const setIndex = useCallback((nextIndex: number) => {
+      indexRef.current = nextIndex;
+      setIndexState(nextIndex);
+    }, []);
 
     const isCurrentFavorite = selectedPokemon ? isFavorite(selectedPokemon.id) : false;
 
@@ -42,13 +54,23 @@ const PokemonDetailSheet = forwardRef<PokemonDetailSheetRef, Props>(
       open: (next) => {
         setSelectedPokemon(next);
         onSelectionChange?.(next);
-        setIndex(OPEN_INDEX);
+        setOpenRequest((count) => count + 1);
       },
       close: () => {
         onSelectionChange?.(null);
         setIndex(CLOSED_INDEX);
       },
     }));
+
+    useEffect(() => {
+      if (!selectedPokemon || openRequest === 0) return;
+
+      const frame = requestAnimationFrame(() => {
+        setIndex(OPEN_INDEX);
+      });
+
+      return () => cancelAnimationFrame(frame);
+    }, [openRequest, selectedPokemon, setIndex]);
 
     const handleIndexChange = useCallback(
       (nextIndex: number) => {
@@ -57,13 +79,17 @@ const PokemonDetailSheet = forwardRef<PokemonDetailSheetRef, Props>(
           onSelectionChange?.(null);
         }
       },
-      [onSelectionChange],
+      [onSelectionChange, setIndex],
     );
 
     const handleSettle = useCallback((nextIndex: number) => {
-      if (nextIndex === CLOSED_INDEX) {
-        setSelectedPokemon(null);
-      }
+      if (nextIndex !== CLOSED_INDEX) return;
+
+      requestAnimationFrame(() => {
+        if (indexRef.current === CLOSED_INDEX) {
+          setSelectedPokemon(null);
+        }
+      });
     }, []);
 
     return (
@@ -87,7 +113,7 @@ const PokemonDetailSheet = forwardRef<PokemonDetailSheetRef, Props>(
             <PokemonDetailContent
               pokemon={selectedPokemon}
               action={{
-                label: isCurrentFavorite ? 'Already your Favorite' : 'Set as Favorite',
+                label: isCurrentFavorite ? ALREADY_FAVORITE_LABEL : SET_AS_FAVORITE_LABEL,
                 onPress: handleFavoritePress,
                 disabled: isCurrentFavorite,
               }}

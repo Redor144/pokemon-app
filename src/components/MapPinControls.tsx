@@ -2,6 +2,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MapPin, Plus, X } from 'lucide-react-native';
 import { colors, fonts, radius, spacing } from '@/constants/theme';
 
+const SELECTION_HINT = 'Tap on the map to place a pin';
+const ADD_PIN_LABEL = 'Add pin';
+const CANCEL_LABEL = 'Cancel';
+const CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL = 'Cancel pin placement';
+
 type Props = {
   isSelectingLocation: boolean;
   pinCount: number;
@@ -17,7 +22,7 @@ export default function MapPinControls({
     <>
       {isSelectingLocation && (
         <View style={styles.selectionHint} pointerEvents="none">
-          <Text style={styles.selectionHintText}>Tap on the map to place a pin</Text>
+          <Text style={styles.selectionHintText}>{SELECTION_HINT}</Text>
         </View>
       )}
 
@@ -29,7 +34,9 @@ export default function MapPinControls({
         ]}
         onPress={onAddPinPress}
         accessibilityRole="button"
-        accessibilityLabel={isSelectingLocation ? 'Cancel pin placement' : 'Add pin'}
+        accessibilityLabel={
+          isSelectingLocation ? CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL : ADD_PIN_LABEL
+        }
       >
         {isSelectingLocation ? (
           <X color={colors.primaryForeground} size={22} strokeWidth={2.5} />
@@ -37,7 +44,7 @@ export default function MapPinControls({
           <Plus color={colors.primaryForeground} size={22} strokeWidth={2.5} />
         )}
         <Text style={styles.addButtonText}>
-          {isSelectingLocation ? 'Cancel' : 'Add pin'}
+          {isSelectingLocation ? CANCEL_LABEL : ADD_PIN_LABEL}
         </Text>
       </Pressable>
 

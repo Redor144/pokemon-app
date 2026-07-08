@@ -1,9 +1,13 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import MapView, { type Region } from 'react-native-maps';
 import { colors, radius, spacing } from '@/constants/theme';
 import type { MapPin } from '@/types/mapPin';
+import FeatureCardPlaceholder from '@/components/FeatureCardPlaceholder';
 import MapPinControls from '@/components/MapPinControls';
 import MapPinMarker from '@/components/MapPinMarker';
+
+const MAP_LOAD_TIMEOUT_MS = 8000;
 
 const CRACOW_REGION: Region = {
   latitude: 50.0647,
@@ -11,6 +15,11 @@ const CRACOW_REGION: Region = {
   latitudeDelta: 0.01,
   longitudeDelta: 0.01,
 };
+
+const MAP_UNAVAILABLE_TITLE = 'Map Unavailable';
+const LOADING_MAP_TITLE = 'Loading Map…';
+
+type MapLoadState = 'loading' | 'ready' | 'unavailable';
 
 type MapPressEvent = {
   nativeEvent: { coordinate: { latitude: number; longitude: number } };
@@ -37,6 +46,37 @@ export default function PokemonMap({
   onMarkerPress,
   onAddPinPress,
 }: Props) {
+  const [loadState, setLoadState] = useState<MapLoadState>('loading');
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearLoadTimeout = useCallback(() => {
+    if (timeoutRef.current !== null) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const handleMapReady = useCallback(() => {
+    clearLoadTimeout();
+    setLoadState('ready');
+  }, [clearLoadTimeout]);
+
+  useEffect(() => {
+    timeoutRef.current = setTimeout(() => {
+      setLoadState((current) => (current === 'loading' ? 'unavailable' : current));
+    }, MAP_LOAD_TIMEOUT_MS);
+
+    return clearLoadTimeout;
+  }, [clearLoadTimeout]);
+
+  if (loadState === 'unavailable') {
+    return (
+      <View style={styles.mapCard}>
+        <FeatureCardPlaceholder title={MAP_UNAVAILABLE_TITLE} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.mapCard}>
       <MapView
@@ -45,25 +85,35 @@ export default function PokemonMap({
         showsCompass={true}
         showsScale={true}
         initialRegion={CRACOW_REGION}
+        onMapReady={handleMapReady}
         onPress={onMapPress}
         onLongPress={onMapLongPress}
       >
-        {pins.map((pin) => (
-          <MapPinMarker
-            key={`${pin.id}-${pin.pokemon?.id ?? 'empty'}`}
-            pin={pin}
-            isSelected={selectedPinId === pin.id}
-            isFavorite={pin.pokemon !== null && isFavorite(pin.pokemon.id)}
-            onPress={onMarkerPress}
-          />
-        ))}
+        {loadState === 'ready' &&
+          pins.map((pin) => (
+            <MapPinMarker
+              key={`${pin.id}-${pin.pokemon?.id ?? 'empty'}-${selectedPinId === pin.id}`}
+              pin={pin}
+              isSelected={selectedPinId === pin.id}
+              isFavorite={pin.pokemon !== null && isFavorite(pin.pokemon.id)}
+              onPress={onMarkerPress}
+            />
+          ))}
       </MapView>
 
-      <MapPinControls
-        isSelectingLocation={isSelectingLocation}
-        pinCount={pins.length}
-        onAddPinPress={onAddPinPress}
-      />
+      {loadState === 'loading' && (
+        <View style={styles.loadingOverlay}>
+          <FeatureCardPlaceholder title={LOADING_MAP_TITLE} loading />
+        </View>
+      )}
+
+      {loadState === 'ready' && (
+        <MapPinControls
+          isSelectingLocation={isSelectingLocation}
+          pinCount={pins.length}
+          onAddPinPress={onAddPinPress}
+        />
+      )}
     </View>
   );
 }
@@ -81,5 +131,9 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFill,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: colors.card,
   },
 });

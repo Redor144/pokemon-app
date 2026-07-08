@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { Marker } from 'react-native-maps';
 import { Heart, MapPin } from 'lucide-react-native';
@@ -16,26 +15,11 @@ type Props = {
 };
 
 export default function MapPinMarker({ pin, isSelected, isFavorite, onPress }: Props) {
-  const [tracksViewChanges, setTracksViewChanges] = useState(
-    () => Platform.OS === 'android' && pin.pokemon !== null,
-  );
-
-  useEffect(() => {
-    if (Platform.OS !== 'android' || !pin.pokemon) return;
-    setTracksViewChanges(true);
-  }, [pin.pokemon?.id, pin.pokemon?.imageUrl]);
-
-  const handleImageLoad = useCallback(() => {
-    if (Platform.OS === 'android') {
-      setTracksViewChanges(false);
-    }
-  }, []);
 
   return (
     <Marker
       coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
       anchor={{ x: 0.5, y: 0.5 }}
-      tracksViewChanges={Platform.OS === 'android' ? tracksViewChanges : undefined}
       onPress={() => onPress(pin)}
     >
       <View style={styles.markerWrapper} collapsable={false}>
@@ -51,7 +35,6 @@ export default function MapPinMarker({ pin, isSelected, isFavorite, onPress }: P
               key={pin.pokemon.imageUrl}
               imageUrl={pin.pokemon.imageUrl}
               size={MARKER_SPRITE_SIZE}
-              onLoad={handleImageLoad}
             />
           ) : (
             <MapPin color={colors.primary} size={20} />

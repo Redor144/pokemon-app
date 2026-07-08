@@ -2,6 +2,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
 import { colors, fonts, spacing, typography } from '@/constants/theme';
 import { getPokemonType } from '@/constants/pokemonTypes';
+import {
+  ATTACK_LABEL,
+  DEFENSE_LABEL,
+  HP_LABEL,
+  SPEED_LABEL,
+} from '@/constants/pokemonStats';
 import { commonStyles } from '@/styles/common';
 import type { PokemonListItem } from '@/types/pokemon';
 import PokemonSprite from '@/components/PokemonSprite';
@@ -79,10 +85,10 @@ export default function PokemonDetailContent({ pokemon, action }: Props) {
       </View>
 
       <View style={styles.stats}>
-        <StatRow label="HP" value={pokemon.hp} />
-        <StatRow label="Attack" value={pokemon.attack} />
-        <StatRow label="Defense" value={pokemon.defense} />
-        <StatRow label="Speed" value={pokemon.speed} />
+        <StatRow label={HP_LABEL} value={pokemon.hp} />
+        <StatRow label={ATTACK_LABEL} value={pokemon.attack} />
+        <StatRow label={DEFENSE_LABEL} value={pokemon.defense} />
+        <StatRow label={SPEED_LABEL} value={pokemon.speed} />
       </View>
 
       {action && (

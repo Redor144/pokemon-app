@@ -1,28 +1,21 @@
 import {
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { FlashList, type ListRenderItem } from '@shopify/flash-list';
+import { StyleSheet, View } from 'react-native';
 import { ModalBottomSheet } from '@swmansion/react-native-bottom-sheet';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, fonts, radius, spacing, typography } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
 import { commonStyles } from '@/styles/common';
-import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
-import { usePokemonList } from '@/hooks/usePokemonList';
 import type { MapPin } from '@/types/mapPin';
 import type { PokemonListItem } from '@/types/pokemon';
+import MapPinAssignContent from '@/components/MapPinAssignContent';
 import PokemonDetailContent from '@/components/PokemonDetailContent';
-import PokemonListRow from '@/components/PokemonListRow';
 
 export type MapPinSheetRef = {
   open: (pin: MapPin) => void;
@@ -30,6 +23,7 @@ export type MapPinSheetRef = {
 };
 
 type Props = {
+  pins: MapPin[];
   assignedPokemonIds: Set<number>;
   onAssignPokemon: (pinId: string, pokemon: PokemonListItem) => void;
   onDeletePin: (pinId: string) => void;
@@ -38,171 +32,96 @@ type Props = {
 
 const CLOSED_INDEX = 0;
 const OPEN_INDEX = 1;
-const LIST_HEIGHT = 280;
-
-function formatCoordinates(latitude: number, longitude: number) {
-  return `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-}
+const DELETE_PIN_LABEL = 'Delete pin';
 
 const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
-  ({ assignedPokemonIds, onAssignPokemon, onDeletePin, onSelectionChange }, ref) => {
+  (
+    { pins, assignedPokemonIds, onAssignPokemon, onDeletePin, onSelectionChange },
+    ref,
+  ) => {
     const insets = useSafeAreaInsets();
-    const { favorite } = useFavoritePokemon();
-    const [index, setIndex] = useState(CLOSED_INDEX);
+    const indexRef = useRef(CLOSED_INDEX);
+    const [index, setIndexState] = useState(CLOSED_INDEX);
+    const [openRequest, setOpenRequest] = useState(0);
     const [selectedPin, setSelectedPin] = useState<MapPin | null>(null);
-    const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
 
-    const isAssigning = selectedPin !== null && selectedPin.pokemon === null;
-
-    const {
-      pokemonList,
-      isInitialLoading,
-      isFetchingNextPage,
-      hasMore,
-      loadMore,
-      refresh,
-      isError,
-    } = usePokemonList({ enabled: index === OPEN_INDEX && isAssigning });
-
-    const resetState = useCallback(() => {
-      setSelectedPin(null);
-      setSelectedPokemon(null);
+    const setIndex = useCallback((nextIndex: number) => {
+      indexRef.current = nextIndex;
+      setIndexState(nextIndex);
     }, []);
 
-    const closeSheet = useCallback(() => {
+    const clearSelection = useCallback(() => {
       onSelectionChange?.(null);
-      setIndex(CLOSED_INDEX);
     }, [onSelectionChange]);
+
+    const activePin = useMemo(() => {
+      if (!selectedPin) return null;
+      return pins.find((pin) => pin.id === selectedPin.id) ?? selectedPin;
+    }, [pins, selectedPin]);
+
+    const closeSheet = useCallback(() => {
+      clearSelection();
+      setIndex(CLOSED_INDEX);
+    }, [clearSelection, setIndex]);
 
     useImperativeHandle(ref, () => ({
       open: (pin) => {
         setSelectedPin(pin);
-        setSelectedPokemon(null);
         onSelectionChange?.(pin.id);
-        setIndex(OPEN_INDEX);
+        setOpenRequest((count) => count + 1);
       },
       close: closeSheet,
     }));
+
+    useEffect(() => {
+      if (!selectedPin || openRequest === 0) return;
+
+      const frame = requestAnimationFrame(() => {
+        setIndex(OPEN_INDEX);
+      });
+
+      return () => cancelAnimationFrame(frame);
+    }, [openRequest, selectedPin, setIndex]);
 
     const handleIndexChange = useCallback(
       (nextIndex: number) => {
         setIndex(nextIndex);
         if (nextIndex === CLOSED_INDEX) {
-          onSelectionChange?.(null);
+          clearSelection();
         }
       },
-      [onSelectionChange],
+      [clearSelection, setIndex],
     );
 
     const handleSettle = useCallback(
       (nextIndex: number) => {
-        if (nextIndex === CLOSED_INDEX) {
-          resetState();
-        }
+        if (nextIndex !== CLOSED_INDEX) return;
+
+        clearSelection();
+
+        requestAnimationFrame(() => {
+          if (indexRef.current === CLOSED_INDEX) {
+            setSelectedPin(null);
+          }
+        });
       },
-      [resetState],
+      [clearSelection],
     );
 
     const handleDeletePin = useCallback(() => {
-      if (!selectedPin) return;
-      onDeletePin(selectedPin.id);
+      if (!activePin) return;
+      onDeletePin(activePin.id);
       closeSheet();
-    }, [selectedPin, onDeletePin, closeSheet]);
+    }, [activePin, onDeletePin, closeSheet]);
 
-    const handleAssignPokemon = useCallback(() => {
-      if (!selectedPin || !selectedPokemon) return;
-      onAssignPokemon(selectedPin.id, selectedPokemon);
-      closeSheet();
-    }, [selectedPin, selectedPokemon, onAssignPokemon, closeSheet]);
-
-    const handlePokemonPress = useCallback(
+    const handleAssignPokemon = useCallback(
       (pokemon: PokemonListItem) => {
-        if (assignedPokemonIds.has(pokemon.id)) return;
-        setSelectedPokemon(pokemon);
+        if (!activePin) return;
+        onAssignPokemon(activePin.id, pokemon);
+        closeSheet();
       },
-      [assignedPokemonIds],
+      [activePin, onAssignPokemon, closeSheet],
     );
-
-    const selectedId = selectedPokemon?.id;
-    const favoriteId = favorite?.id;
-    const isSelectedPokemonAssigned =
-      selectedPokemon !== null && assignedPokemonIds.has(selectedPokemon.id);
-
-    const keyExtractor = useCallback((item: PokemonListItem) => item.id.toString(), []);
-
-    const renderItem: ListRenderItem<PokemonListItem> = useCallback(
-      ({ item }) => (
-        <PokemonListRow
-          pokemon={item}
-          onPress={handlePokemonPress}
-          isSelected={selectedId === item.id}
-          isFavorite={favoriteId === item.id}
-          disabled={assignedPokemonIds.has(item.id)}
-          disabledLabel="On another pin"
-        />
-      ),
-      [handlePokemonPress, selectedId, favoriteId, assignedPokemonIds],
-    );
-
-    const listFooter = useMemo(() => {
-      if (hasMore && isFetchingNextPage) {
-        return (
-          <ActivityIndicator
-            size="large"
-            color={colors.primary}
-            style={styles.listFooter}
-          />
-        );
-      }
-      return null;
-    }, [hasMore, isFetchingNextPage]);
-
-    const listContent = useMemo(() => {
-      if (isInitialLoading) {
-        return (
-          <View style={styles.listState}>
-            <ActivityIndicator size="large" color={colors.primary} />
-          </View>
-        );
-      }
-
-      if (isError) {
-        return (
-          <View style={styles.listState}>
-            <Text style={styles.errorTitle}>Could not load Pokémon</Text>
-            <Text style={styles.errorCaption}>
-              Check your connection and try again.
-            </Text>
-            <Pressable style={styles.retryButton} onPress={() => refresh()}>
-              <Text style={commonStyles.primaryButtonText}>Retry</Text>
-            </Pressable>
-          </View>
-        );
-      }
-
-      return (
-        <FlashList
-          data={pokemonList}
-          keyExtractor={keyExtractor}
-          extraData={[selectedId, favoriteId]}
-          renderItem={renderItem}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={listFooter}
-        />
-      );
-    }, [
-      isInitialLoading,
-      isError,
-      pokemonList,
-      keyExtractor,
-      selectedId,
-      favoriteId,
-      renderItem,
-      loadMore,
-      listFooter,
-      refresh,
-    ]);
 
     return (
       <ModalBottomSheet
@@ -222,54 +141,24 @@ const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
             { paddingBottom: insets.bottom + spacing.xl },
           ]}
         >
-          {selectedPin?.pokemon && (
+          {activePin?.pokemon && (
             <PokemonDetailContent
-              pokemon={selectedPin.pokemon}
+              pokemon={activePin.pokemon}
               action={{
-                label: 'Delete pin',
+                label: DELETE_PIN_LABEL,
                 onPress: handleDeletePin,
                 variant: 'destructive',
               }}
             />
           )}
 
-          {selectedPin && !selectedPin.pokemon && (
-            <>
-              <Text style={styles.title}>New pin</Text>
-              <Text style={styles.subtitle}>
-                {formatCoordinates(selectedPin.latitude, selectedPin.longitude)}
-              </Text>
-
-              <View style={styles.listContainer}>{listContent}</View>
-
-              <Pressable
-                style={({ pressed }) => [
-                  commonStyles.primaryButton,
-                  (!selectedPokemon || isSelectedPokemonAssigned || isInitialLoading || isError) &&
-                    commonStyles.primaryButtonDisabled,
-                  pressed &&
-                    selectedPokemon &&
-                    !isSelectedPokemonAssigned &&
-                    !isInitialLoading &&
-                    !isError &&
-                    styles.buttonPressed,
-                ]}
-                onPress={handleAssignPokemon}
-                disabled={!selectedPokemon || isSelectedPokemonAssigned || isInitialLoading || isError}
-              >
-                <Text style={commonStyles.primaryButtonText}>Assign Pokémon</Text>
-              </Pressable>
-
-              <Pressable
-                style={({ pressed }) => [
-                  styles.deleteButton,
-                  pressed && styles.buttonPressed,
-                ]}
-                onPress={handleDeletePin}
-              >
-                <Text style={styles.deleteButtonText}>Delete pin</Text>
-              </Pressable>
-            </>
+          {activePin && !activePin.pokemon && (
+            <MapPinAssignContent
+              pin={activePin}
+              assignedPokemonIds={assignedPokemonIds}
+              onAssign={handleAssignPokemon}
+              onDelete={handleDeletePin}
+            />
           )}
         </View>
       </ModalBottomSheet>
@@ -285,62 +174,5 @@ const styles = StyleSheet.create({
   sheetContent: {
     width: '100%',
     alignItems: 'stretch',
-  },
-  title: {
-    ...typography.heading,
-    textAlign: 'center',
-  },
-  subtitle: {
-    ...typography.caption,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-  },
-  listContainer: {
-    width: '100%',
-    height: LIST_HEIGHT,
-    marginTop: spacing.md,
-  },
-  listState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  listFooter: {
-    margin: spacing.lg,
-  },
-  errorTitle: {
-    ...typography.heading,
-    fontFamily: fonts.nunitoBold,
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  errorCaption: {
-    ...typography.caption,
-    marginTop: spacing.sm,
-    marginBottom: spacing.lg,
-    textAlign: 'center',
-  },
-  retryButton: {
-    ...commonStyles.primaryButton,
-    width: 'auto',
-    paddingHorizontal: spacing.xl,
-  },
-  buttonPressed: {
-    opacity: 0.85,
-  },
-  deleteButton: {
-    borderRadius: spacing.xl,
-    paddingVertical: spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.muted,
-    marginTop: spacing.sm,
-  },
-  deleteButtonText: {
-    fontFamily: fonts.nunitoBold,
-    fontSize: 16,
-    color: colors.destructive,
   },
 });

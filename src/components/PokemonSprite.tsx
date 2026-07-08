@@ -16,6 +16,7 @@ function PokemonSprite({ imageUrl, size, style, onLoad }: Props) {
     return (
       <Image
         source={{ uri: imageUrl }}
+        recyclingKey={imageUrl}
         style={[{ width: size, height: size }, style]}
         contentFit="contain"
         onLoad={onLoad}

@@ -6,6 +6,23 @@ import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito
 import { DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold } from '@expo-google-fonts/dm-sans';
 import { DMMono_400Regular, DMMono_500Medium } from '@expo-google-fonts/dm-mono';
 
+
+const FAVORITE_LABEL = 'Favorite';
+const FAVORITE_TITLE = 'Favorite Pokémon';
+const FAVORITE_SUBTITLE = 'My collection';
+
+const POKEDEX_LABEL = 'Pokédex';
+const POKEDEX_TITLE = 'Pokédex';
+const POKEDEX_SUBTITLE = 'Gotta catch \'em all';
+
+const CAMERA_LABEL = 'Camera';
+const CAMERA_TITLE = 'AR Pokémon Cam';
+const CAMERA_SUBTITLE = 'Vision camera';
+
+const MAP_LABEL = 'Map';
+const MAP_TITLE = 'Map';
+const MAP_SUBTITLE = 'Pokémon World';
+
 export default function TabsLayout() {
   const [loaded] = useFonts({
     Nunito_400Regular,
@@ -43,26 +60,25 @@ export default function TabsLayout() {
     >
       <Tabs.Screen
         name="index"
-        options={tabBarNavOptions('Favorite', Heart, 'favorite', {
-          filled: true,
-          header: { title: 'Favorite Pokémon', subtitle: 'My collection' },
-        })}
+        options={tabBarNavOptions(FAVORITE_LABEL, Heart,
+          { title: FAVORITE_TITLE, subtitle: FAVORITE_SUBTITLE, icon: Heart },
+          { filled: true }
+        )}
       />
       <Tabs.Screen
         name="pokemon-list"
-        options={tabBarNavOptions('Pokédex', List, 'pokedex', {
-          header: { title: 'Pokédex', subtitle: 'Gotta catch \'em all', showIcon: false },
-        })}
+        options={tabBarNavOptions(POKEDEX_LABEL, List, { title: POKEDEX_TITLE, subtitle: POKEDEX_SUBTITLE, },
+        )}
       />
       <Tabs.Screen
         name="camera"
-        options={tabBarNavOptions('Camera', Camera, 'camera')}
+        options={tabBarNavOptions(CAMERA_LABEL, Camera, { title: CAMERA_TITLE, subtitle: CAMERA_SUBTITLE },
+        )}
       />
       <Tabs.Screen
         name="map"
-        options={tabBarNavOptions('Map', Map, 'map', {
-          header: { title: 'Map', subtitle: 'Pokémon World', showIcon: false },
-        })}
+        options={tabBarNavOptions(MAP_LABEL, Map, { title: MAP_TITLE, subtitle: MAP_SUBTITLE },
+        )}
       />
     </Tabs>
   );

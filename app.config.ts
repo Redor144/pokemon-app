@@ -10,7 +10,11 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'light',
   ios: {
     bundleIdentifier: 'com.pokemon.app',
+    deploymentTarget: '17.0',
     supportsTablet: true,
+    infoPlist: {
+      NSCameraUsageDescription: 'Allow Pokémon App to use the camera for AR detection.',
+    },
   },
   android: {
     package: 'com.pokemon.app',
@@ -21,12 +25,14 @@ const config: ExpoConfig = {
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
+    permissions: ['android.permission.CAMERA'],
   },
   web: {
     favicon: './assets/favicon.png',
   },
   plugins: [
     'expo-router',
+    'expo-dev-client',
     'expo-status-bar',
     'expo-image',
     [

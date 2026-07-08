@@ -43,6 +43,7 @@ function MapScreenContent() {
 
       <MapPinSheet
         ref={sheetRef}
+        pins={pins}
         assignedPokemonIds={assignedPokemonIds}
         onAssignPokemon={assignPokemon}
         onDeletePin={deletePin}
