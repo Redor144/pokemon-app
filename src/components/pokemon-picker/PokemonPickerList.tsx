@@ -56,7 +56,6 @@ export default function PokemonPickerList({
   }, [isInitialLoading, isError, onQueryStateChange]);
 
   const isEmbedded = listHeight !== undefined;
-  const variant = isEmbedded ? 'embedded' : 'screen';
 
   if (!isEmbedded && isInitialLoading) {
     return (

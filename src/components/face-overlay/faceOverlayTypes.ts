@@ -10,7 +10,10 @@ export type DetectedFace = {
   landmarks?: FaceLandmarks;
   rollAngle?: number;
 };
-export type FaceOverlayRef = { updateFaces: (faces: DetectedFace[]) => void };
+export type FaceOverlayRef = {
+  updateFaces: (faces: DetectedFace[]) => void;
+  getFaces: () => DetectedFace[];
+};
 
 export type SpritePlacement = {
   left: number;

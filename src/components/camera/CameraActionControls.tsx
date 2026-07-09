@@ -8,14 +8,18 @@ const CHOOSE_POKEMON_ACCESSIBILITY_LABEL = 'Choose Pokémon';
 
 type Props = {
   isFaceMode: boolean;
+  isCapturing: boolean;
   onToggleCamera: () => void;
   onChoosePokemon: () => void;
+  onCapture: () => void;
 };
 
 export default function CameraActionControls({
   isFaceMode,
+  isCapturing = false,
   onToggleCamera,
   onChoosePokemon,
+  onCapture,
 }: Props) {
   return (
     <View style={styles.cameraActionControls}>
@@ -31,11 +35,14 @@ export default function CameraActionControls({
       </View>
 
       <View style={styles.cameraActionColumn}>
-        <Pressable
-          style={styles.shutterButton}
-          accessibilityRole="button"
-          accessibilityLabel={CAPTURE_PHOTO_ACCESSIBILITY_LABEL}
-        >
+      <Pressable
+        style={[styles.shutterButton, isCapturing && styles.shutterButtonDisabled]}
+        onPress={onCapture}
+        disabled={isCapturing}
+        accessibilityRole="button"
+        accessibilityLabel={CAPTURE_PHOTO_ACCESSIBILITY_LABEL}
+        accessibilityState={{ disabled: isCapturing }}
+      >
           <View style={styles.shutterInnerRing} pointerEvents="none" />
           <CameraIcon size={28} color={colors.primaryForeground} strokeWidth={2.25} />
         </Pressable>
@@ -101,5 +108,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.full,
     borderWidth: 2,
     borderColor: colors.controlRing,
+  },
+  shutterButtonDisabled: {
+    opacity: 0.45,
   },
 });

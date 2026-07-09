@@ -1,6 +1,7 @@
+import { forwardRef, memo } from 'react';
 import PlainCameraPreview from '@/components/camera/PlainCameraPreview';
 import FaceDetectionCameraPreview from '@/components/camera/FaceDetectionCameraPreview';
-import type { CameraFacing } from '@/types/camera';
+import type { CameraFacing, CameraPreviewRef } from '@/types/camera';
 import type { PokemonListItem } from '@/types/pokemon';
 
 type Props = {
@@ -9,16 +10,23 @@ type Props = {
   overlayPokemon: PokemonListItem | null;
 };
 
-export default function CameraPreview({
-  facing,
-  enableFaceDetection,
-  overlayPokemon,
-}: Props) {
+const CameraPreview = memo(
+  forwardRef<CameraPreviewRef, Props>(function CameraPreview(
+  { facing, enableFaceDetection, overlayPokemon },
+  ref,
+) {
   if (enableFaceDetection) {
     return (
-      <FaceDetectionCameraPreview facing={facing} overlayPokemon={overlayPokemon} />
+      <FaceDetectionCameraPreview
+        ref={ref}
+        facing={facing}
+        overlayPokemon={overlayPokemon}
+      />
     );
   }
 
-  return <PlainCameraPreview facing={facing} />;
-}
+  return <PlainCameraPreview ref={ref} facing={facing} />;
+  }),
+);
+
+export default CameraPreview;

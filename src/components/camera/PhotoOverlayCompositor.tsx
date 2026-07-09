@@ -1,0 +1,136 @@
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Image } from 'expo-image';
+import ViewShot, { type ViewShotRef } from 'react-native-view-shot';
+import FaceOverlay from '@/components/face-overlay/FaceOverlay';
+import type { DetectedFace } from '@/components/face-overlay/faceOverlayTypes';
+import type { PokemonListItem } from '@/types/pokemon';
+
+type CompositeParams = {
+  photoUri: string;
+  faces: DetectedFace[];
+  pokemon: PokemonListItem;
+  size: { width: number; height: number };
+};
+
+export type PhotoOverlayCompositorRef = {
+  composite: (params: CompositeParams) => Promise<string>;
+};
+
+const PhotoOverlayCompositor = forwardRef<PhotoOverlayCompositorRef>(function PhotoOverlayCompositor(
+  _,
+  ref,
+) {
+  const viewShotRef = useRef<ViewShotRef>(null);
+  const [compositing, setCompositing] = useState<CompositeParams | null>(null);
+  const resolveRef = useRef<((uri: string) => void) | null>(null);
+  const rejectRef = useRef<((error: Error) => void) | null>(null);
+  const photoLoadedRef = useRef(false);
+  const spritesReadyRef = useRef(false);
+
+  const finishComposite = useCallback(
+    async (success: boolean, error?: Error) => {
+      if (!success) {
+        rejectRef.current?.(error ?? new Error('Capture failed'));
+        resolveRef.current = null;
+        rejectRef.current = null;
+        photoLoadedRef.current = false;
+        spritesReadyRef.current = false;
+        setCompositing(null);
+        return;
+      }
+
+      if (!viewShotRef.current) {
+        rejectRef.current?.(new Error('Compositor is not ready.'));
+        resolveRef.current = null;
+        rejectRef.current = null;
+        photoLoadedRef.current = false;
+        spritesReadyRef.current = false;
+        setCompositing(null);
+        return;
+      }
+
+      try {
+        const uri = await viewShotRef.current.capture();
+        resolveRef.current?.(uri);
+      } catch (captureError) {
+        rejectRef.current?.(
+          captureError instanceof Error ? captureError : new Error('Capture failed'),
+        );
+      } finally {
+        resolveRef.current = null;
+        rejectRef.current = null;
+        photoLoadedRef.current = false;
+        spritesReadyRef.current = false;
+        setCompositing(null);
+      }
+    },
+    [],
+  );
+
+  const tryCapture = useCallback(() => {
+    if (!photoLoadedRef.current || !spritesReadyRef.current) return;
+    void finishComposite(true);
+  }, [finishComposite]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      composite: (params) =>
+        new Promise<string>((resolve, reject) => {
+          photoLoadedRef.current = false;
+          spritesReadyRef.current = false;
+          resolveRef.current = resolve;
+          rejectRef.current = reject;
+          setCompositing(params);
+        }),
+    }),
+    [],
+  );
+
+  const handlePhotoLoad = useCallback(() => {
+    photoLoadedRef.current = true;
+    tryCapture();
+  }, [tryCapture]);
+
+  const handleSpritesReady = useCallback(() => {
+    spritesReadyRef.current = true;
+    tryCapture();
+  }, [tryCapture]);
+
+  if (!compositing) return null;
+
+  const { photoUri, faces, pokemon, size } = compositing;
+
+  return (
+    <View
+      style={[styles.offscreen, { width: size.width, height: size.height }]}
+      pointerEvents="none"
+    >
+      <ViewShot
+        ref={viewShotRef}
+        style={{ width: size.width, height: size.height }}
+        options={{ format: 'jpg', quality: 0.9 }}
+      >
+        <Image
+          source={{ uri: photoUri }}
+          style={{ width: size.width, height: size.height }}
+          contentFit="cover"
+          onLoad={handlePhotoLoad}
+        />
+        <FaceOverlay pokemon={pokemon} faces={faces} onSpritesReady={handleSpritesReady} />
+      </ViewShot>
+    </View>
+  );
+});
+
+export default PhotoOverlayCompositor;
+
+const styles = StyleSheet.create({
+  offscreen: {
+    position: 'absolute',
+    left: -9999,
+    top: 0,
+    opacity: 0,
+  },
+});

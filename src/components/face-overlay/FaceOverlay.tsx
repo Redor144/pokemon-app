@@ -1,4 +1,4 @@
-import { forwardRef, memo, useImperativeHandle, useState } from 'react';
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import PokemonSprite from '@/components/ui/PokemonSprite';
 import { computeSpritePlacement } from '@/components/face-overlay/computeSpritePlacement';
@@ -9,23 +9,52 @@ const MAX_FACES = 3;
 
 type Props = {
   pokemon: PokemonListItem | null;
+  faces?: DetectedFace[];
+  onSpritesReady?: () => void;
 };
 
 const FaceOverlay = memo(
-  forwardRef<FaceOverlayRef, Props>(function FaceOverlay({ pokemon }, ref) {
-    const [faces, setFaces] = useState<DetectedFace[]>([]);
+  forwardRef<FaceOverlayRef, Props>(function FaceOverlay(
+    { pokemon, faces: frozenFaces, onSpritesReady },
+    ref,
+  ) {
+    const [liveFaces, setLiveFaces] = useState<DetectedFace[]>([]);
+    const facesRef = useRef<DetectedFace[]>([]);
+    const loadedSpriteIndicesRef = useRef<Set<number>>(new Set());
+
+    const displayFaces = frozenFaces ?? liveFaces;
 
     useImperativeHandle(ref, () => ({
       updateFaces: (nextFaces) => {
-        setFaces(nextFaces.slice(0, MAX_FACES));
+        const sliced = nextFaces.slice(0, MAX_FACES);
+        facesRef.current = sliced;
+        if (frozenFaces === undefined) {
+          setLiveFaces(sliced);
+        }
       },
+      getFaces: () => facesRef.current,
     }));
+
+    useEffect(() => {
+      loadedSpriteIndicesRef.current = new Set();
+
+      if (!onSpritesReady || !pokemon || displayFaces.length === 0) {
+        onSpritesReady?.();
+      }
+    }, [displayFaces, onSpritesReady, pokemon]);
+
+    const handleSpriteLoad = (index: number) => {
+      loadedSpriteIndicesRef.current.add(index);
+      if (onSpritesReady && loadedSpriteIndicesRef.current.size >= displayFaces.length) {
+        onSpritesReady();
+      }
+    };
 
     if (!pokemon) return null;
 
     return (
       <View style={styles.container} pointerEvents="none">
-        {faces.map((face, index) => {
+        {displayFaces.map((face, index) => {
           const placement = computeSpritePlacement(face);
 
           return (
@@ -48,7 +77,11 @@ const FaceOverlay = memo(
                 },
               ]}
             >
-              <PokemonSprite imageUrl={pokemon.imageUrl} size={placement.size} />
+              <PokemonSprite
+                imageUrl={pokemon.imageUrl}
+                size={placement.size}
+                onLoad={onSpritesReady ? () => handleSpriteLoad(index) : undefined}
+              />
             </View>
           );
         })}
