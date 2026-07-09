@@ -10,7 +10,6 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'light',
   ios: {
     bundleIdentifier: 'com.pokemon.app',
-    deploymentTarget: '17.0',
     supportsTablet: true,
     infoPlist: {
       NSCameraUsageDescription: 'Allow Pokémon App to use the camera for AR detection.',
@@ -33,7 +32,6 @@ const config: ExpoConfig = {
   plugins: [
     'expo-router',
     'expo-dev-client',
-    'expo-status-bar',
     'expo-image',
     [
       'react-native-maps',
