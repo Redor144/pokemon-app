@@ -1,14 +1,11 @@
 import { forwardRef, memo, useImperativeHandle, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import PokemonSprite from '@/components/PokemonSprite';
+import PokemonSprite from '@/components/ui/PokemonSprite';
+import { computeSpritePlacement } from '@/components/face-overlay/computeSpritePlacement';
+import type { DetectedFace, FaceOverlayRef } from '@/components/face-overlay/faceOverlayTypes';
 import type { PokemonListItem } from '@/types/pokemon';
 
-export type FaceBounds = { x: number; y: number; width: number; height: number };
-export type FaceOverlayRef = { updateFaces: (faces: FaceBounds[]) => void };
-
 const MAX_FACES = 3;
-const SPRITE_SIZE_RATIO = 0.65;
-const FOREHEAD_OFFSET_RATIO = 2;
 
 type Props = {
   pokemon: PokemonListItem | null;
@@ -16,7 +13,7 @@ type Props = {
 
 const FaceOverlay = memo(
   forwardRef<FaceOverlayRef, Props>(function FaceOverlay({ pokemon }, ref) {
-    const [faces, setFaces] = useState<FaceBounds[]>([]);
+    const [faces, setFaces] = useState<DetectedFace[]>([]);
 
     useImperativeHandle(ref, () => ({
       updateFaces: (nextFaces) => {
@@ -29,9 +26,7 @@ const FaceOverlay = memo(
     return (
       <View style={styles.container} pointerEvents="none">
         {faces.map((face, index) => {
-          const spriteSize = face.width * SPRITE_SIZE_RATIO;
-          const left = face.x + (face.width - spriteSize) / 2;
-          const top = face.y - spriteSize * FOREHEAD_OFFSET_RATIO;
+          const placement = computeSpritePlacement(face);
 
           return (
             <View
@@ -39,14 +34,21 @@ const FaceOverlay = memo(
               style={[
                 styles.sprite,
                 {
-                  left,
-                  top,
-                  width: spriteSize,
-                  height: spriteSize,
+                  left: placement.left,
+                  top: placement.top,
+                  width: placement.size,
+                  height: placement.size,
+                  transform: [
+                    { translateX: placement.size / 2 },
+                    { translateY: placement.pivotY },
+                    { rotate: `${placement.rotation}deg` },
+                    { translateX: -placement.size / 2 },
+                    { translateY: -placement.pivotY },
+                  ],
                 },
               ]}
             >
-              <PokemonSprite imageUrl={pokemon.imageUrl} size={spriteSize} />
+              <PokemonSprite imageUrl={pokemon.imageUrl} size={placement.size} />
             </View>
           );
         })}

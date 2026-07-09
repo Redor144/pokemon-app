@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react-native';
 import { View, StyleSheet, type ColorValue } from 'react-native';
-import { TabBarNavButton } from '@/components/TabBarNavButton';
-import { TabScreenHeader, type TabScreenHeaderOptions } from '@/components/TabScreenHeader';
+import { TabBarNavButton } from '@/components/navigation/TabBarNavButton';
+import { TabScreenHeader, type TabScreenHeaderOptions } from '@/components/navigation/TabScreenHeader';
 import { colors, spacing } from '@/constants/theme';
 
 const HEADER_ICON_SIZE = 18;

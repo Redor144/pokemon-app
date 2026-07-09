@@ -13,6 +13,7 @@ const config: ExpoConfig = {
     supportsTablet: true,
     infoPlist: {
       NSCameraUsageDescription: 'Allow Pokémon App to use the camera for AR detection.',
+      NSPhotoLibraryAddUsageDescription: 'Allow Pokémon App to save photos to the library.',
     },
   },
   android: {
@@ -24,7 +25,7 @@ const config: ExpoConfig = {
       monochromeImage: './assets/android-icon-monochrome.png',
     },
     predictiveBackGestureEnabled: false,
-    permissions: ['android.permission.CAMERA'],
+    permissions: ['android.permission.CAMERA', 'android.permission.WRITE_EXTERNAL_STORAGE'],
   },
   web: {
     favicon: './assets/favicon.png',

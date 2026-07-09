@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { colors } from '@/constants/theme';
-import { tabBarNavOptions } from '@/components/tabBarOptions';
+import { tabBarNavOptions } from '@/components/navigation/tabBarOptions';
 import { List, Heart, Camera, Map } from 'lucide-react-native';
 import { useFonts, Nunito_400Regular, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, Nunito_900Black } from '@expo-google-fonts/nunito';
 import { DMSans_400Regular, DMSans_500Medium, DMSans_600SemiBold } from '@expo-google-fonts/dm-sans';

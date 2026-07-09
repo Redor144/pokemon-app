@@ -22,21 +22,23 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.0",
+    "react-native-gesture-handler": "~2.32.0",
     "react-native-maps": "^1.29.0",
     "react-native-mmkv": "^4.3.2",
     "react-native-nitro-image": "^0.15.1",
     "react-native-nitro-modules": "^0.36.1",
-    "react-native-gesture-handler": "~2.32.0",
     "react-native-reanimated": "4.5.0",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "4.25.2",
     "react-native-svg": "15.15.4",
     "react-native-vision-camera": "^5.1.0",
     "react-native-vision-camera-face-detector": "^2.0.5",
+    "react-native-vision-camera-worklets": "^5.1.0",
     "react-native-worklets": "0.10.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "patch-package": "^8.0.1",
     "typescript": "~6.0.3"
   },
   "scripts": {

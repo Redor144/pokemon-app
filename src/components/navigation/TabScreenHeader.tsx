@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TabHeaderTitle } from '@/components/TabHeaderTitle';
+import { TabHeaderTitle } from '@/components/navigation/TabHeaderTitle';
 import { colors, spacing } from '@/constants/theme';
 
 export type TabScreenHeaderOptions = {

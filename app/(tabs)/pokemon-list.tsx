@@ -3,10 +3,10 @@ import { View } from 'react-native';
 import { commonStyles } from '@/styles/common';
 import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
 import type { PokemonListItem } from '@/types/pokemon';
-import PokemonPickerList from '@/components/PokemonPickerList';
+import PokemonPickerList from '@/components/pokemon-picker/PokemonPickerList';
 import PokemonDetailSheet, {
   type PokemonDetailSheetRef,
-} from '@/components/PokemonDetailSheet';
+} from '@/components/pokemon-detail/PokemonDetailSheet';
 
 export default function PokemonListScreen() {
   const { favorite } = useFavoritePokemon();

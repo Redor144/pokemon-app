@@ -1,13 +1,13 @@
 import { memo, useCallback } from 'react';
 import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { commonStyles } from '@/styles/common';
-import { colors, spacing, typography } from '@/constants/theme';
+import { colors, radius, spacing, typography } from '@/constants/theme';
 import { HP_LABEL } from '@/constants/pokemonStats';
 import type { PokemonListItem } from '@/types/pokemon';
 import { Heart } from 'lucide-react-native';
-import PokemonSprite from '@/components/PokemonSprite';
-import TypeBadge from '@/components/TypeBadge';
-import StatProgressBar from './StatProgressBar';
+import PokemonSprite from '@/components/ui/PokemonSprite';
+import TypeBadge from '@/components/ui/TypeBadge';
+import StatProgressBar from '@/components/ui/StatProgressBar';
 
 const MAX_HP = 255;
 
@@ -40,29 +40,36 @@ function PokemonListRow({
 
   return (
     <Pressable onPress={handlePress} disabled={disabled}>
-      <View style={[commonStyles.row, isSelected && styles.selected, disabled && styles.disabled]}>
-        <PokemonSprite imageUrl={pokemon.imageUrl} size={56} />
-        <View style={styles.info}>
-          <View style={styles.nameRow}>
-            <Text style={[typography.pokemonName, styles.name]}>{pokemon.name}</Text>
-            {isFavorite && <Heart color={colors.primary} size={14} fill={colors.primary} />}
-          </View>
-          <Text style={typography.pokemonId}>{formatId(pokemon.id)}</Text>
-          {disabled && disabledLabel ? (
-            <Text style={styles.disabledLabel}>{disabledLabel}</Text>
-          ) : (
-            <View style={[commonStyles.typeRow, styles.typeRow]}>
-              {pokemon.types.map((type) => (
-                <TypeBadge key={type} type={type} />
-              ))}
+      <View
+        style={[
+          styles.selectionShell,
+          isSelected && styles.selectionShellSelected,
+        ]}
+      >
+        <View style={[commonStyles.row, styles.row, disabled && styles.disabled]}>
+          <PokemonSprite imageUrl={pokemon.imageUrl} size={56} />
+          <View style={styles.info}>
+            <View style={styles.nameRow}>
+              <Text style={[typography.pokemonName, styles.name]}>{pokemon.name}</Text>
+              {isFavorite && <Heart color={colors.primary} size={14} fill={colors.primary} />}
             </View>
-          )}
-        </View>
+            <Text style={typography.pokemonId}>{formatId(pokemon.id)}</Text>
+            {disabled && disabledLabel ? (
+              <Text style={styles.disabledLabel}>{disabledLabel}</Text>
+            ) : (
+              <View style={[commonStyles.typeRow, styles.typeRow]}>
+                {pokemon.types.map((type) => (
+                  <TypeBadge key={type} type={type} />
+                ))}
+              </View>
+            )}
+          </View>
 
-        <View style={styles.right}>
-          <View style={styles.hpBlock}>
-            <Text style={styles.hpLabel}>{HP_LABEL} {pokemon.hp}</Text>
-            <StatProgressBar percent={hpPercent} />
+          <View style={styles.right}>
+            <View style={styles.hpBlock}>
+              <Text style={styles.hpLabel}>{HP_LABEL} {pokemon.hp}</Text>
+              <StatProgressBar percent={hpPercent} />
+            </View>
           </View>
         </View>
       </View>
@@ -73,9 +80,17 @@ function PokemonListRow({
 export default memo(PokemonListRow);
 
 const styles = StyleSheet.create({
-  selected: {
+  selectionShell: {
     borderWidth: 2,
+    borderColor: 'transparent',
+    borderRadius: radius.lg + 2,
+    marginBottom: spacing.md,
+  },
+  selectionShellSelected: {
     borderColor: colors.ring,
+  },
+  row: {
+    marginBottom: 0,
   },
   disabled: {
     opacity: 0.45,

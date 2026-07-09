@@ -5,7 +5,7 @@ import { commonStyles } from '@/styles/common';
 import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
 import type { MapPin } from '@/types/mapPin';
 import type { PokemonListItem } from '@/types/pokemon';
-import PokemonPickerList from '@/components/PokemonPickerList';
+import PokemonPickerList from '@/components/pokemon-picker/PokemonPickerList';
 
 const LIST_HEIGHT = 280;
 const ON_ANOTHER_PIN_LABEL = 'On another pin';

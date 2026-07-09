@@ -3,7 +3,7 @@ import { Marker } from 'react-native-maps';
 import { Heart, MapPin } from 'lucide-react-native';
 import { colors, radius } from '@/constants/theme';
 import type { MapPin as MapPinData } from '@/types/mapPin';
-import PokemonSprite from '@/components/PokemonSprite';
+import PokemonSprite from '@/components/ui/PokemonSprite';
 
 const MARKER_SPRITE_SIZE = 36;
 

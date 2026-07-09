@@ -5,8 +5,8 @@ import type { MapPin } from '@/types/mapPin';
 import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
 import { MapPinsProvider, useMapPins } from '@/contexts/MapPinsContext';
 import { useMapPinPlacement } from '@/hooks/useMapPinPlacement';
-import MapPinSheet, { type MapPinSheetRef } from '@/components/MapPinSheet';
-import PokemonMap from '@/components/PokemonMap';
+import MapPinSheet, { type MapPinSheetRef } from '@/components/map/MapPinSheet';
+import PokemonMap from '@/components/map/PokemonMap';
 
 function MapScreenContent() {
   const { pins, assignedPokemonIds, assignPokemon, deletePin } = useMapPins();
