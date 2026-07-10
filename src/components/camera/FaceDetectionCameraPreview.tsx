@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import { LayoutChangeEvent, View } from 'react-native';
+import { LayoutChangeEvent, Platform, View } from 'react-native';
 import { usePhotoOutput } from 'react-native-vision-camera';
 import {
   Camera as FaceDetectionCamera,
@@ -25,6 +25,27 @@ function toFileUri(path: string) {
   return path.startsWith('file://') ? path : `file://${path}`;
 }
 
+function mirrorFacesX(faces: DetectedFace[], width: number): DetectedFace[] {
+  return faces.map((face) => ({
+    bounds: { ...face.bounds, x: width - face.bounds.x - face.bounds.width },
+    landmarks: face.landmarks && {
+      LEFT_EYE: face.landmarks.LEFT_EYE && {
+        x: width - face.landmarks.LEFT_EYE.x,
+        y: face.landmarks.LEFT_EYE.y,
+      },
+      RIGHT_EYE: face.landmarks.RIGHT_EYE && {
+        x: width - face.landmarks.RIGHT_EYE.x,
+        y: face.landmarks.RIGHT_EYE.y,
+      },
+      NOSE_BASE: face.landmarks.NOSE_BASE && {
+        x: width - face.landmarks.NOSE_BASE.x,
+        y: face.landmarks.NOSE_BASE.y,
+      },
+    },
+    rollAngle: face.rollAngle == null ? face.rollAngle : -face.rollAngle,
+  }));
+}
+
 type Props = {
   facing: CameraFacing;
   overlayPokemon: PokemonListItem | null;
@@ -36,6 +57,7 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
     const [previewLayout, setPreviewLayout] = useState({ width: 0, height: 0 });
     const faceOverlayRef = useRef<FaceOverlayRef>(null);
     const compositorRef = useRef<PhotoOverlayCompositorRef>(null);
+    const rawFacesRef = useRef<DetectedFace[]>([]);
     const photoOutput = usePhotoOutput();
     const lastUpdate = useRef(0);
 
@@ -45,7 +67,11 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
         captureForSave: async () => {
           const { filePath } = await photoOutput.capturePhotoToFile({ flashMode: 'off' }, {});
           const photoUri = toFileUri(filePath);
-          const faces = faceOverlayRef.current?.getFaces() ?? [];
+          const { width } = previewLayout;
+          const faces =
+            Platform.OS === 'ios' && width > 0
+              ? mirrorFacesX(rawFacesRef.current, width)
+              : rawFacesRef.current;
 
           if (
             !overlayPokemon ||
@@ -78,29 +104,40 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
       );
     }, []);
 
-    const handleFacesDetected = useCallback((detectedFaces: Face[]) => {
-      const now = Date.now();
-      if (now - lastUpdate.current < FACE_UPDATE_INTERVAL_MS) return;
-      lastUpdate.current = now;
+    const handleFacesDetected = useCallback(
+      (detectedFaces: Face[]) => {
+        const now = Date.now();
+        if (now - lastUpdate.current < FACE_UPDATE_INTERVAL_MS) return;
+        lastUpdate.current = now;
 
-      const faces: DetectedFace[] = detectedFaces.map((face) => ({
-        bounds: {
-          x: face.bounds.x,
-          y: face.bounds.y,
-          width: face.bounds.width,
-          height: face.bounds.height,
-        },
-        landmarks: face.landmarks
-          ? {
-              LEFT_EYE: face.landmarks.LEFT_EYE,
-              RIGHT_EYE: face.landmarks.RIGHT_EYE,
-              NOSE_BASE: face.landmarks.NOSE_BASE,
-            }
-          : undefined,
-        rollAngle: face.rollAngle,
-      }));
-      faceOverlayRef.current?.updateFaces(faces);
-    }, []);
+        const rawFaces: DetectedFace[] = detectedFaces.map((face) => ({
+          bounds: {
+            x: face.bounds.x,
+            y: face.bounds.y,
+            width: face.bounds.width,
+            height: face.bounds.height,
+          },
+          landmarks: face.landmarks
+            ? {
+                LEFT_EYE: face.landmarks.LEFT_EYE,
+                RIGHT_EYE: face.landmarks.RIGHT_EYE,
+                NOSE_BASE: face.landmarks.NOSE_BASE,
+              }
+            : undefined,
+          rollAngle: face.rollAngle,
+        }));
+        rawFacesRef.current = rawFaces;
+
+        const { width } = previewLayout;
+        const displayFaces =
+          Platform.OS === 'ios' && facing === 'back' && width > 0
+            ? mirrorFacesX(rawFaces, width)
+            : rawFaces;
+
+        faceOverlayRef.current?.updateFaces(displayFaces);
+      },
+      [facing, previewLayout],
+    );
 
     const handleFaceDetectionError = useCallback((error: Error) => {
       console.error(error);
