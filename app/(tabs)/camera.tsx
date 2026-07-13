@@ -15,6 +15,14 @@ import type { PokemonListItem } from '@/types/pokemon';
 export default function CameraScreen() {
   const [mode, setMode] = useState<DetectionMode>('face');
   const [facing, setFacing] = useState<CameraFacing>('back');
+  const isObjectMode = mode === 'object';
+
+  const handleModeChange = (nextMode: DetectionMode) => {
+    setMode(nextMode);
+    if (nextMode === 'object') {
+      setFacing('back');
+    }
+  };
   const [overlayPokemon, setOverlayPokemon] = useState<PokemonListItem | null>(null);
   const pickerSheetRef = useRef<PokemonPickerSheetRef>(null);
   const cameraRef = useRef<CameraPreviewRef>(null);
@@ -22,7 +30,7 @@ export default function CameraScreen() {
 
   return (
     <View style={commonStyles.screen}>
-      <CameraModeSelector mode={mode} onModeChange={setMode} />
+      <CameraModeSelector mode={mode} onModeChange={handleModeChange} />
       <View style={cameraStyles.cameraCard}>
         <CameraPreview
           ref={cameraRef}
@@ -32,7 +40,7 @@ export default function CameraScreen() {
         />
       </View>
       <CameraActionControls
-        isFaceMode={mode === 'face'}
+        isCameraToggleDisabled={isObjectMode}
         isCapturing={isCapturing}
         onCapture={() => void capturePhoto()}
         onToggleCamera={() => setFacing((current) => (current === 'front' ? 'back' : 'front'))}

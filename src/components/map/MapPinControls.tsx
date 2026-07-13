@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MapPin, Plus, X } from 'lucide-react-native';
+import SelectionHint from '@/components/ui/SelectionHint';
 import { colors, fonts, radius, spacing } from '@/constants/theme';
 
 const SELECTION_HINT = 'Tap on the map to place a pin';
@@ -20,11 +21,7 @@ export default function MapPinControls({
 }: Props) {
   return (
     <>
-      {isSelectingLocation && (
-        <View style={styles.selectionHint} pointerEvents="none">
-          <Text style={styles.selectionHintText}>{SELECTION_HINT}</Text>
-        </View>
-      )}
+      {isSelectingLocation && <SelectionHint text={SELECTION_HINT} />}
 
       <Pressable
         style={({ pressed }) => [
@@ -81,25 +78,6 @@ const styles = StyleSheet.create({
   },
   addButtonActive: {
     backgroundColor: colors.destructive,
-  },
-  selectionHint: {
-    position: 'absolute',
-    top: spacing.md,
-    left: spacing.md,
-    right: spacing.md,
-    backgroundColor: colors.card,
-    borderRadius: radius.lg,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    alignItems: 'center',
-  },
-  selectionHintText: {
-    fontFamily: fonts.nunitoBold,
-    fontSize: 13,
-    color: colors.foreground,
-    textAlign: 'center',
   },
   addButtonText: {
     fontFamily: fonts.nunitoBold,

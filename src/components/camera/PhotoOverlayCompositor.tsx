@@ -2,15 +2,19 @@ import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from '
 import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import ViewShot, { type ViewShotRef } from 'react-native-view-shot';
+import ObjectSpriteOverlay, { type BboxRect } from '@/components/camera/ObjectSpriteOverlay';
 import FaceOverlay from '@/components/face-overlay/FaceOverlay';
 import type { DetectedFace } from '@/components/face-overlay/faceOverlayTypes';
+import { mirrorFacesHorizontally } from '@/components/face-overlay/mirrorFacesHorizontally';
 import type { PokemonListItem } from '@/types/pokemon';
 
 type CompositeParams = {
   photoUri: string;
-  faces: DetectedFace[];
   pokemon: PokemonListItem;
   size: { width: number; height: number };
+  faces?: DetectedFace[];
+  bboxRect?: BboxRect;
+  mirrorSprites?: boolean;
 };
 
 export type PhotoOverlayCompositorRef = {
@@ -100,7 +104,9 @@ const PhotoOverlayCompositor = forwardRef<PhotoOverlayCompositorRef>(function Ph
 
   if (!compositing) return null;
 
-  const { photoUri, faces, pokemon, size } = compositing;
+  const { photoUri, faces, bboxRect, pokemon, size, mirrorSprites } = compositing;
+  const compositeFaces =
+    faces && mirrorSprites ? mirrorFacesHorizontally(faces, size.width) : faces;
 
   return (
     <View
@@ -118,7 +124,20 @@ const PhotoOverlayCompositor = forwardRef<PhotoOverlayCompositorRef>(function Ph
           contentFit="cover"
           onLoad={handlePhotoLoad}
         />
-        <FaceOverlay pokemon={pokemon} faces={faces} onSpritesReady={handleSpritesReady} />
+        {bboxRect ? (
+          <ObjectSpriteOverlay
+            rect={bboxRect}
+            pokemon={pokemon}
+            onSpriteReady={handleSpritesReady}
+          />
+        ) : (
+          <FaceOverlay
+            pokemon={pokemon}
+            faces={compositeFaces ?? []}
+            mirrorSprites={mirrorSprites}
+            onSpritesReady={handleSpritesReady}
+          />
+        )}
       </ViewShot>
     </View>
   );

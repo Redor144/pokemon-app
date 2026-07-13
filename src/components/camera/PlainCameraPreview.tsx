@@ -1,64 +1,160 @@
-import { forwardRef, useImperativeHandle } from 'react';
-import { View } from 'react-native';
-import { Camera, usePhotoOutput } from 'react-native-vision-camera';
+import { forwardRef, useCallback, useRef } from 'react';
+import { Pressable, View } from 'react-native';
+import { isAvailable, models, useObjectDetection } from 'react-native-executorch';
+import { Camera } from 'react-native-vision-camera';
 import FeatureCardPlaceholder from '@/components/ui/FeatureCardPlaceholder';
-import { useCameraPreviewState } from '@/hooks/useCameraPreviewState';
-import type { CameraFacing, CameraPreviewRef } from '@/types/camera';
+import CameraPreviewGate from '@/components/camera/CameraPreviewGate';
+import ObjectDetectionConfirmSheet from '@/components/camera/ObjectDetectionConfirmSheet';
+import ObjectTrackingLostSheet from '@/components/camera/ObjectTrackingLostSheet';
+import ObjectTrackingBbox from '@/components/camera/ObjectTrackingBbox';
+import PhotoOverlayCompositor, {
+  type PhotoOverlayCompositorRef,
+} from '@/components/camera/PhotoOverlayCompositor';
+import SelectionHint from '@/components/ui/SelectionHint';
 import { cameraStyles } from '@/components/camera/cameraStyles';
+import { useCameraCaptureHandle } from '@/hooks/useCameraCaptureHandle';
+import { useCameraPreviewState } from '@/hooks/useCameraPreviewState';
+import { useObjectTapTracking } from '@/hooks/useObjectTapTracking';
+import type { CameraPreviewRef } from '@/types/camera';
+import type { PokemonListItem } from '@/types/pokemon';
 
-const CAMERA_PERMISSION_REQUIRED_TITLE = 'Camera Permission Required';
-const LOADING_CAMERA_TITLE = 'Loading Camera…';
-const GRANT_PERMISSION_LABEL = 'Grant permission';
-
-function toFileUri(path: string) {
-  return path.startsWith('file://') ? path : `file://${path}`;
-}
+const LOADING_MODEL_TITLE = 'Loading Object Detection Model…';
+const OBJECT_DETECTION_HINT = 'Tap on an object to detect';
 
 type Props = {
-  facing: CameraFacing;
+  overlayPokemon: PokemonListItem | null;
 };
 
 const PlainCameraPreview = forwardRef<CameraPreviewRef, Props>(function PlainCameraPreview(
-  { facing },
+  { overlayPokemon },
   ref,
 ) {
-  const { isActive, hasPermission, requestPermission, device } = useCameraPreviewState(facing);
-  const photoOutput = usePhotoOutput();
+  const { isActive, hasPermission, requestPermission, device } = useCameraPreviewState('back');
+  const objectDetection = useObjectDetection({
+    model: models.object_detection.ssdlite_320_mobilenet_v3_large(),
+    preventLoad: !isAvailable,
+  });
+  const compositorRef = useRef<PhotoOverlayCompositorRef>(null);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      captureForSave: async () => {
-        const { filePath } = await photoOutput.capturePhotoToFile({ flashMode: 'off' }, {});
-        return toFileUri(filePath);
-      },
-    }),
-    [photoOutput],
+  const {
+    frameOutput,
+    handlePreviewLayout,
+    handleTap,
+    bboxRect,
+    getTrackedViewRect,
+    previewLayout,
+    phase,
+    pendingDetection,
+    proposalPreview,
+    lostLabel,
+    confirmTracking,
+    dismissProposal,
+    dismissLost,
+    pauseFrameProcessing,
+    resumeFrameProcessing,
+  } = useObjectTapTracking({
+    runOnFrame: objectDetection.runOnFrame,
+    isModelReady: objectDetection.isReady,
+  });
+
+  const processCapturedUri = useCallback(
+    async (uri: string) => {
+      const trackedRect = getTrackedViewRect();
+
+      if (
+        !overlayPokemon ||
+        !trackedRect ||
+        previewLayout.width === 0 ||
+        previewLayout.height === 0
+      ) {
+        return uri;
+      }
+
+      if (!compositorRef.current) {
+        throw new Error('Photo compositor is not ready.');
+      }
+
+      return compositorRef.current.composite({
+        photoUri: uri,
+        pokemon: overlayPokemon,
+        bboxRect: trackedRect,
+        size: previewLayout,
+      });
+    },
+    [getTrackedViewRect, overlayPokemon, previewLayout],
   );
 
-  if (!hasPermission) {
-    return (
-      <FeatureCardPlaceholder
-        title={CAMERA_PERMISSION_REQUIRED_TITLE}
-        actionLabel={GRANT_PERMISSION_LABEL}
-        onAction={() => void requestPermission()}
-      />
-    );
-  }
+  const photoOutput = useCameraCaptureHandle({
+    ref,
+    processCapturedUri,
+    photoOptions: { containerFormat: 'jpeg' },
+    onBeforeCapture: pauseFrameProcessing,
+    onAfterCapture: resumeFrameProcessing,
+  });
 
-  if (!device) {
-    return <FeatureCardPlaceholder title={LOADING_CAMERA_TITLE} loading />;
-  }
+  const canTap = phase === 'idle' || phase === 'tracking';
+  const showSelectionHint = phase === 'idle';
 
   return (
-    <View style={cameraStyles.previewContainer}>
-      <Camera
-        style={cameraStyles.cameraView}
-        device={device}
-        isActive={isActive}
-        outputs={[photoOutput]}
-      />
-    </View>
+    <CameraPreviewGate
+      hasPermission={hasPermission}
+      requestPermission={requestPermission}
+      device={device}
+    >
+      {!objectDetection.isReady ? (
+        <FeatureCardPlaceholder
+          title={LOADING_MODEL_TITLE}
+          caption={
+            objectDetection.downloadProgress > 0
+              ? `${Math.round(objectDetection.downloadProgress * 100)}% downloaded`
+              : undefined
+          }
+          loading
+        />
+      ) : objectDetection.error ? (
+        <FeatureCardPlaceholder
+          title="Object Detection Failed"
+          caption={objectDetection.error.message}
+        />
+      ) : (
+        <View style={cameraStyles.previewContainer} onLayout={handlePreviewLayout}>
+          {showSelectionHint && <SelectionHint text={OBJECT_DETECTION_HINT} />}
+          <Pressable
+            style={cameraStyles.cameraView}
+            onPress={(e) => {
+              if (!canTap) {
+                return;
+              }
+
+              const { locationX, locationY } = e.nativeEvent;
+              handleTap(locationX, locationY);
+            }}
+          >
+            <Camera
+              style={cameraStyles.cameraView}
+              device={device!}
+              isActive={isActive}
+              orientationSource="device"
+              outputs={[photoOutput, frameOutput]}
+            />
+          </Pressable>
+          <ObjectTrackingBbox rect={bboxRect} pokemon={overlayPokemon} phase={phase} />
+          <ObjectDetectionConfirmSheet
+            isOpen={phase === 'proposal'}
+            detection={pendingDetection}
+            preview={proposalPreview}
+            onAccept={confirmTracking}
+            onDismiss={dismissProposal}
+          />
+          <ObjectTrackingLostSheet
+            isOpen={phase === 'lost'}
+            label={lostLabel}
+            onDismiss={dismissLost}
+          />
+        </View>
+      )}
+      <PhotoOverlayCompositor ref={compositorRef} />
+    </CameraPreviewGate>
   );
 });
 

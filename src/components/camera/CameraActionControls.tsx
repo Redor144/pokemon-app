@@ -7,7 +7,7 @@ const CAPTURE_PHOTO_ACCESSIBILITY_LABEL = 'Capture photo';
 const CHOOSE_POKEMON_ACCESSIBILITY_LABEL = 'Choose Pokémon';
 
 type Props = {
-  isFaceMode: boolean;
+  isCameraToggleDisabled?: boolean;
   isCapturing: boolean;
   onToggleCamera: () => void;
   onChoosePokemon: () => void;
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function CameraActionControls({
-  isFaceMode,
+  isCameraToggleDisabled = false,
   isCapturing = false,
   onToggleCamera,
   onChoosePokemon,
@@ -26,9 +26,14 @@ export default function CameraActionControls({
       <View style={styles.cameraActionColumn}>
         <Pressable
           onPress={onToggleCamera}
-          style={styles.sideActionButton}
+          style={[
+            styles.sideActionButton,
+            isCameraToggleDisabled && styles.sideActionButtonDisabled,
+          ]}
+          disabled={isCameraToggleDisabled}
           accessibilityRole="button"
           accessibilityLabel={SWITCH_CAMERA_ACCESSIBILITY_LABEL}
+          accessibilityState={{ disabled: isCameraToggleDisabled }}
         >
           <SwitchCamera size={22} color={colors.foreground} />
         </Pressable>
@@ -50,12 +55,10 @@ export default function CameraActionControls({
 
       <View style={styles.cameraActionColumn}>
         <Pressable
-          style={[styles.sideActionButton, !isFaceMode && styles.sideActionButtonDisabled]}
+          style={styles.sideActionButton}
           onPress={onChoosePokemon}
-          disabled={!isFaceMode}
           accessibilityRole="button"
           accessibilityLabel={CHOOSE_POKEMON_ACCESSIBILITY_LABEL}
-          accessibilityState={{ disabled: !isFaceMode }}
         >
           <Sparkles size={22} color={colors.foreground} />
         </Pressable>

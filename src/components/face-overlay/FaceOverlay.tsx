@@ -5,17 +5,17 @@ import { computeSpritePlacement } from '@/components/face-overlay/computeSpriteP
 import type { DetectedFace, FaceOverlayRef } from '@/components/face-overlay/faceOverlayTypes';
 import type { PokemonListItem } from '@/types/pokemon';
 
-const MAX_FACES = 3;
 
 type Props = {
   pokemon: PokemonListItem | null;
   faces?: DetectedFace[];
   onSpritesReady?: () => void;
+  mirrorSprites?: boolean;
 };
 
 const FaceOverlay = memo(
   forwardRef<FaceOverlayRef, Props>(function FaceOverlay(
-    { pokemon, faces: frozenFaces, onSpritesReady },
+    { pokemon, faces: frozenFaces, onSpritesReady, mirrorSprites },
     ref,
   ) {
     const [liveFaces, setLiveFaces] = useState<DetectedFace[]>([]);
@@ -26,10 +26,9 @@ const FaceOverlay = memo(
 
     useImperativeHandle(ref, () => ({
       updateFaces: (nextFaces) => {
-        const sliced = nextFaces.slice(0, MAX_FACES);
-        facesRef.current = sliced;
+        facesRef.current = nextFaces;
         if (frozenFaces === undefined) {
-          setLiveFaces(sliced);
+          setLiveFaces(nextFaces);
         }
       },
       getFaces: () => facesRef.current,
@@ -67,13 +66,7 @@ const FaceOverlay = memo(
                   top: placement.top,
                   width: placement.size,
                   height: placement.size,
-                  transform: [
-                    { translateX: placement.size / 2 },
-                    { translateY: placement.pivotY },
-                    { rotate: `${placement.rotation}deg` },
-                    { translateX: -placement.size / 2 },
-                    { translateY: -placement.pivotY },
-                  ],
+                  ...(mirrorSprites ? { transform: [{ scaleX: -1 }] } : null),
                 },
               ]}
             >

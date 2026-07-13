@@ -35,6 +35,13 @@ const config: ExpoConfig = {
     'expo-dev-client',
     'expo-image',
     [
+      'expo-build-properties',
+      {
+        ios: { newArchEnabled: true, deploymentTarget: '17.0' },
+        android: { newArchEnabled: true, minSdkVersion: 26 },
+      },
+    ],
+    [
       'react-native-maps',
       {
         androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,

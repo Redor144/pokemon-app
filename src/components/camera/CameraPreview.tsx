@@ -25,7 +25,7 @@ const CameraPreview = memo(
     );
   }
 
-  return <PlainCameraPreview ref={ref} facing={facing} />;
+  return <PlainCameraPreview ref={ref} overlayPokemon={overlayPokemon} />;
   }),
 );
 

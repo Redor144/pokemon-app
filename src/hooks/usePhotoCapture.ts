@@ -1,6 +1,7 @@
 import { Asset, requestPermissionsAsync } from 'expo-media-library';
 import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
+import { toFileUri } from '@/components/camera/cameraUtils';
 import type { CameraPreviewRef } from '@/types/camera';
 
 type Params = {
@@ -24,7 +25,7 @@ export function usePhotoCapture({ cameraRef }: Params) {
         return;
       }
 
-      await Asset.create(uri.startsWith('file://') ? uri : `file://${uri}`);
+      await Asset.create(toFileUri(uri));
       Alert.alert('Saved', 'Photo saved to your library.');
     } catch (error) {
       console.error(error);
