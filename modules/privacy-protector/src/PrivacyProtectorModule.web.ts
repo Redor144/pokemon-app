@@ -1,4 +1,4 @@
-import { registerWebModule, NativeModule } from 'expo';
+import { registerWebModule, NativeModule } from "expo";
 
 // PrivacyProtectorModule is not available on the web platform.
 class PrivacyProtectorModule extends NativeModule {
@@ -6,4 +6,7 @@ class PrivacyProtectorModule extends NativeModule {
   disablePrivacyProtector(): void {}
 }
 
-export default registerWebModule(PrivacyProtectorModule, 'PrivacyProtectorModule');
+export default registerWebModule(
+  PrivacyProtectorModule,
+  "PrivacyProtectorModule",
+);

@@ -1,4 +1,4 @@
-import type { DetectedFace } from '@/components/face-overlay/faceOverlayTypes';
+import type { DetectedFace } from "@/components/face-overlay/faceOverlayTypes";
 
 export function mirrorFacesHorizontally(
   faces: readonly DetectedFace[],

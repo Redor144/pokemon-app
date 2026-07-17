@@ -1,17 +1,17 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
-import type { Detection } from 'react-native-executorch';
+import { Pressable, StyleSheet, Text } from "react-native";
+import type { Detection } from "react-native-executorch";
 import {
   formatDetectionConfidence,
   formatDetectionLabel,
-} from '@/components/camera/formatDetection';
-import ObjectDetectionPreview from '@/components/camera/ObjectDetectionPreview';
-import { colors, fonts, spacing, typography } from '@/constants/theme';
-import { commonStyles } from '@/styles/common';
-import type { ProposalPreview } from '@/hooks/useObjectTapTracking';
+} from "@/components/camera/formatDetection";
+import ObjectDetectionPreview from "@/components/camera/ObjectDetectionPreview";
+import { colors, fonts, spacing, typography } from "@/constants/theme";
+import { commonStyles } from "@/styles/common";
+import type { ProposalPreview } from "@/hooks/useObjectTapTracking";
 
-const NO_OBJECT_TITLE = 'No object detected';
-const ACCEPT_AND_TRACE_LABEL = 'Accept and trace';
-const DISMISS_LABEL = 'Dismiss';
+const NO_OBJECT_TITLE = "No object detected";
+const ACCEPT_AND_TRACE_LABEL = "Accept and trace";
+const DISMISS_LABEL = "Dismiss";
 
 type Props = {
   detection: Detection | null;
@@ -39,24 +39,36 @@ export default function ObjectDetectionConfirmContent({
       )}
 
       <Text style={styles.title}>
-        {hasDetection ? formatDetectionLabel(String(detection.label)) : NO_OBJECT_TITLE}
+        {hasDetection
+          ? formatDetectionLabel(String(detection.label))
+          : NO_OBJECT_TITLE}
       </Text>
 
       {hasDetection && (
-        <Text style={styles.subtitle}>{formatDetectionConfidence(detection.score)}</Text>
+        <Text style={styles.subtitle}>
+          {formatDetectionConfidence(detection.score)}
+        </Text>
       )}
 
       {hasDetection && (
         <Pressable
-          style={({ pressed }) => [commonStyles.primaryButton, pressed && styles.buttonPressed]}
+          style={({ pressed }) => [
+            commonStyles.primaryButton,
+            pressed && styles.buttonPressed,
+          ]}
           onPress={onAccept}
         >
-          <Text style={commonStyles.primaryButtonText}>{ACCEPT_AND_TRACE_LABEL}</Text>
+          <Text style={commonStyles.primaryButtonText}>
+            {ACCEPT_AND_TRACE_LABEL}
+          </Text>
         </Pressable>
       )}
 
       <Pressable
-        style={({ pressed }) => [styles.dismissButton, pressed && styles.buttonPressed]}
+        style={({ pressed }) => [
+          styles.dismissButton,
+          pressed && styles.buttonPressed,
+        ]}
         onPress={onDismiss}
       >
         <Text style={styles.dismissButtonText}>{DISMISS_LABEL}</Text>
@@ -68,21 +80,21 @@ export default function ObjectDetectionConfirmContent({
 const styles = StyleSheet.create({
   title: {
     ...typography.heading,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     ...typography.caption,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: spacing.xs,
   },
   buttonPressed: {
     opacity: 0.85,
   },
   dismissButton: {
-    width: '100%',
+    width: "100%",
     borderRadius: spacing.xl,
     paddingVertical: spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.muted,

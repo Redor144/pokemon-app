@@ -1,11 +1,11 @@
-import { useImperativeHandle } from 'react';
-import { Platform } from 'react-native';
-import { usePhotoOutput } from 'react-native-vision-camera';
-import { toFileUri } from '@/components/camera/cameraUtils';
-import type { CameraPreviewRef } from '@/types/camera';
+import { useImperativeHandle } from "react";
+import { Platform } from "react-native";
+import { usePhotoOutput } from "react-native-vision-camera";
+import { toFileUri } from "@/components/camera/cameraUtils";
+import type { CameraPreviewRef } from "@/types/camera";
 
 type PhotoOutputOptions = {
-  containerFormat?: 'jpeg';
+  containerFormat?: "jpeg";
 };
 
 type Options = {
@@ -32,12 +32,18 @@ export function useCameraCaptureHandle({
         onBeforeCapture?.();
 
         try {
-          if (Platform.OS === 'android') {
-            const { filePath } = await photoOutput.capturePhotoToFile({ flashMode: 'off' }, {});
+          if (Platform.OS === "android") {
+            const { filePath } = await photoOutput.capturePhotoToFile(
+              { flashMode: "off" },
+              {},
+            );
             return processCapturedUri(toFileUri(filePath));
           }
 
-          const photo = await photoOutput.capturePhoto({ flashMode: 'off' }, {});
+          const photo = await photoOutput.capturePhoto(
+            { flashMode: "off" },
+            {},
+          );
 
           try {
             const filePath = await photo.saveToTemporaryFileAsync();

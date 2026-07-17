@@ -1,6 +1,9 @@
-import { Text, View } from 'react-native';
-import StatProgressBar from '@/components/ui/StatProgressBar';
-import { MAX_STAT, pokemonDetailStyles } from '@/components/pokemon-detail/pokemonDetailStyles';
+import { Text, View } from "react-native";
+import StatProgressBar from "@/components/ui/StatProgressBar";
+import {
+  MAX_STAT,
+  pokemonDetailStyles,
+} from "@/components/pokemon-detail/pokemonDetailStyles";
 
 type Props = {
   label: string;

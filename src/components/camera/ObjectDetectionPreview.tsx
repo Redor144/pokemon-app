@@ -1,9 +1,12 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Image } from 'expo-image';
-import PulsingBboxRect from '@/components/camera/PulsingBboxRect';
-import { imageBboxToViewRect, type Bbox } from '@/components/camera/previewCoords';
-import { colors, radius, spacing } from '@/constants/theme';
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
+import PulsingBboxRect from "@/components/camera/PulsingBboxRect";
+import {
+  imageBboxToViewRect,
+  type Bbox,
+} from "@/components/camera/previewCoords";
+import { colors, radius, spacing } from "@/constants/theme";
 
 type Size = { width: number; height: number };
 
@@ -13,7 +16,11 @@ type Props = {
   bbox: Bbox;
 };
 
-export default function ObjectDetectionPreview({ uri, frameSize, bbox }: Props) {
+export default function ObjectDetectionPreview({
+  uri,
+  frameSize,
+  bbox,
+}: Props) {
   const [layout, setLayout] = useState<Size>({ width: 0, height: 0 });
   const bboxRect =
     layout.width > 0 && layout.height > 0
@@ -22,7 +29,10 @@ export default function ObjectDetectionPreview({ uri, frameSize, bbox }: Props) 
 
   return (
     <View
-      style={[styles.container, { aspectRatio: frameSize.width / frameSize.height }]}
+      style={[
+        styles.container,
+        { aspectRatio: frameSize.width / frameSize.height },
+      ]}
       onLayout={(event) => {
         const { width, height } = event.nativeEvent.layout;
         setLayout({ width, height });
@@ -40,9 +50,9 @@ export default function ObjectDetectionPreview({ uri, frameSize, bbox }: Props) 
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     borderRadius: radius.lg,
-    overflow: 'hidden',
+    overflow: "hidden",
     marginBottom: spacing.md,
     backgroundColor: colors.muted,
   },

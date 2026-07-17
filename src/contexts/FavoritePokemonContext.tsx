@@ -5,16 +5,16 @@ import {
   useMemo,
   useState,
   type ReactNode,
-} from 'react';
-import { FAVORITE_KEY, storage } from '@/lib/storage';
-import type { FavoritePokemon } from '@/types/pokemon';
+} from "react";
+import { FAVORITE_KEY, storage } from "@/lib/storage";
+import type { FavoritePokemon } from "@/types/pokemon";
 
 function readFavorite(): FavoritePokemon | null {
   try {
     const raw = storage.getString(FAVORITE_KEY);
     return raw ? (JSON.parse(raw) as FavoritePokemon) : null;
   } catch (error) {
-    console.error('Error loading favorite Pokemon:', error);
+    console.error("Error loading favorite Pokemon:", error);
     return null;
   }
 }
@@ -27,10 +27,13 @@ type FavoritePokemonContextValue = {
   reload: () => void;
 };
 
-const FavoritePokemonContext = createContext<FavoritePokemonContextValue | null>(null);
+const FavoritePokemonContext =
+  createContext<FavoritePokemonContextValue | null>(null);
 
 export function FavoritePokemonProvider({ children }: { children: ReactNode }) {
-  const [favorite, setFavorite] = useState<FavoritePokemon | null>(readFavorite);
+  const [favorite, setFavorite] = useState<FavoritePokemon | null>(
+    readFavorite,
+  );
 
   const reload = useCallback(() => {
     setFavorite(readFavorite());
@@ -72,7 +75,9 @@ export function FavoritePokemonProvider({ children }: { children: ReactNode }) {
 export function useFavoritePokemon() {
   const context = useContext(FavoritePokemonContext);
   if (!context) {
-    throw new Error('useFavoritePokemon must be used within FavoritePokemonProvider');
+    throw new Error(
+      "useFavoritePokemon must be used within FavoritePokemonProvider",
+    );
   }
   return context;
 }

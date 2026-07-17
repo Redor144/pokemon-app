@@ -1,5 +1,5 @@
-import { NativeModule, requireNativeModule } from 'expo';
+import { NativeModule, requireNativeModule } from "expo";
 
 declare class AnimatedTextModule extends NativeModule<{}> {}
 
-export default requireNativeModule<AnimatedTextModule>('AnimatedText');
+export default requireNativeModule<AnimatedTextModule>("AnimatedText");

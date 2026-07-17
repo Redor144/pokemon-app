@@ -18,7 +18,7 @@ class AnimatedTextView: ExpoView {
     hostingController.view.frame = bounds
   }
 
-  func updateSpecs(value: Double) {
+  func updateValue(value: Double) {
     withAnimation { model.value = Int(value.rounded()) }
   }
 

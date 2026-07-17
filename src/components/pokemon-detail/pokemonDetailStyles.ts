@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, fonts, spacing, typography } from '@/constants/theme';
+import { StyleSheet } from "react-native";
+import { colors, fonts, spacing, typography } from "@/constants/theme";
 
 export const SPRITE_SIZE = 180;
 export const GLOW_SIZE = 260;
@@ -8,25 +8,25 @@ export const MAX_STAT = 255;
 export const pokemonDetailStyles = StyleSheet.create({
   id: {
     ...typography.pokemonId,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   name: {
     ...typography.pokemonNameLarge,
-    textTransform: 'capitalize',
-    textAlign: 'center',
+    textTransform: "capitalize",
+    textAlign: "center",
   },
   typeRow: {
-    justifyContent: 'center',
+    justifyContent: "center",
     gap: spacing.md,
   },
   stats: {
-    width: '100%',
+    width: "100%",
     gap: spacing.sm,
     marginTop: spacing.xs,
   },
   statRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
   },
   statLabel: {
@@ -37,7 +37,7 @@ export const pokemonDetailStyles = StyleSheet.create({
   },
   statValue: {
     width: 32,
-    textAlign: 'right',
+    textAlign: "right",
     fontFamily: fonts.dmMonoMedium,
     fontSize: 12,
     lineHeight: 16,
@@ -54,13 +54,13 @@ export const pokemonDetailStyles = StyleSheet.create({
     color: colors.destructiveForeground,
   },
   spriteHero: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     height: SPRITE_SIZE + spacing.lg,
     marginVertical: spacing.sm,
   },
   spriteGlow: {
-    position: 'absolute',
+    position: "absolute",
   },
 });

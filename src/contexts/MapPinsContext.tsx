@@ -5,18 +5,18 @@ import {
   useMemo,
   useState,
   type ReactNode,
-} from 'react';
-import { MAP_PINS_KEY, storage } from '@/lib/storage';
-import type { MapPin } from '@/types/mapPin';
-import type { PokemonListItem } from '@/types/pokemon';
-import * as Crypto from 'expo-crypto';
+} from "react";
+import { MAP_PINS_KEY, storage } from "@/lib/storage";
+import type { MapPin } from "@/types/mapPin";
+import type { PokemonListItem } from "@/types/pokemon";
+import * as Crypto from "expo-crypto";
 
 function readMapPins(): MapPin[] {
   try {
     const raw = storage.getString(MAP_PINS_KEY);
     return raw ? (JSON.parse(raw) as MapPin[]) : [];
   } catch (error) {
-    console.error('Error loading map pins:', error);
+    console.error("Error loading map pins:", error);
     return [];
   }
 }
@@ -67,15 +67,18 @@ export function MapPinsProvider({ children }: { children: ReactNode }) {
     return newPin;
   }, []);
 
-  const assignPokemon = useCallback((pinId: string, pokemon: PokemonListItem) => {
-    setPins((current) => {
-      const next = current.map((pin) =>
-        pin.id === pinId ? { ...pin, pokemon } : pin,
-      );
-      saveMapPins(next);
-      return next;
-    });
-  }, []);
+  const assignPokemon = useCallback(
+    (pinId: string, pokemon: PokemonListItem) => {
+      setPins((current) => {
+        const next = current.map((pin) =>
+          pin.id === pinId ? { ...pin, pokemon } : pin,
+        );
+        saveMapPins(next);
+        return next;
+      });
+    },
+    [],
+  );
 
   const deletePin = useCallback((pinId: string) => {
     setPins((current) => {
@@ -97,16 +100,14 @@ export function MapPinsProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <MapPinsContext.Provider value={value}>
-      {children}
-    </MapPinsContext.Provider>
+    <MapPinsContext.Provider value={value}>{children}</MapPinsContext.Provider>
   );
 }
 
 export function useMapPins() {
   const context = useContext(MapPinsContext);
   if (!context) {
-    throw new Error('useMapPins must be used within MapPinsProvider');
+    throw new Error("useMapPins must be used within MapPinsProvider");
   }
   return context;
 }

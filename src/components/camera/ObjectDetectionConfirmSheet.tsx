@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
-import type { Detection } from 'react-native-executorch';
-import ObjectDetectionConfirmContent from '@/components/camera/ObjectDetectionConfirmContent';
-import ModalSheetContainer from '@/components/sheets/ModalSheetContainer';
-import { useModalBottomSheet } from '@/hooks/useModalBottomSheet';
-import type { ProposalPreview } from '@/hooks/useObjectTapTracking';
+import { useCallback, useEffect } from "react";
+import { StyleSheet } from "react-native";
+import type { Detection } from "react-native-executorch";
+import ObjectDetectionConfirmContent from "@/components/camera/ObjectDetectionConfirmContent";
+import ModalSheetContainer from "@/components/sheets/ModalSheetContainer";
+import { useModalBottomSheet } from "@/hooks/useModalBottomSheet";
+import type { ProposalPreview } from "@/hooks/useObjectTapTracking";
 
 type Props = {
   isOpen: boolean;
@@ -21,10 +21,11 @@ export default function ObjectDetectionConfirmSheet({
   onAccept,
   onDismiss,
 }: Props) {
-  const { index, requestOpen, close, handleIndexChange, handleSettle } = useModalBottomSheet({
-    shouldOpen: isOpen,
-    onClearSelection: onDismiss,
-  });
+  const { index, requestOpen, close, handleIndexChange, handleSettle } =
+    useModalBottomSheet({
+      shouldOpen: isOpen,
+      onClearSelection: onDismiss,
+    });
 
   useEffect(() => {
     if (isOpen) {
@@ -61,7 +62,7 @@ export default function ObjectDetectionConfirmSheet({
 
 const styles = StyleSheet.create({
   sheetContent: {
-    width: '100%',
-    alignItems: 'stretch',
+    width: "100%",
+    alignItems: "stretch",
   },
 });

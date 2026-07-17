@@ -1,6 +1,6 @@
-import type { Detection } from 'react-native-executorch';
-import { MIN_TRACKING_IOU } from '@/components/camera/cameraConstants';
-import type { Bbox } from '@/components/camera/previewCoords';
+import type { Detection } from "react-native-executorch";
+import { MIN_TRACKING_IOU } from "@/components/camera/cameraConstants";
+import type { Bbox } from "@/components/camera/previewCoords";
 
 function bboxCenter(detection: Detection) {
   const { x1, y1, x2, y2 } = detection.bbox;
@@ -33,7 +33,9 @@ function pickDetectionAtTap(
     return null;
   }
 
-  const containing = detections.filter((detection) => containsPoint(detection, imageX, imageY));
+  const containing = detections.filter((detection) =>
+    containsPoint(detection, imageX, imageY),
+  );
 
   if (containing.length > 0) {
     return containing.sort((a, b) => b.score - a.score)[0];

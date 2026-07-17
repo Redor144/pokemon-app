@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
-import type { CameraDevice } from 'react-native-vision-camera';
-import FeatureCardPlaceholder from '@/components/ui/FeatureCardPlaceholder';
+import type { ReactNode } from "react";
+import type { CameraDevice } from "react-native-vision-camera";
+import FeatureCardPlaceholder from "@/components/ui/FeatureCardPlaceholder";
 import {
   CAMERA_PERMISSION_REQUIRED_TITLE,
   GRANT_PERMISSION_LABEL,
   LOADING_CAMERA_TITLE,
-} from '@/components/camera/cameraConstants';
+} from "@/components/camera/cameraConstants";
 
 type Props = {
   hasPermission: boolean;

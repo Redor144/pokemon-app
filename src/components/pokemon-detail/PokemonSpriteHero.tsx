@@ -1,12 +1,12 @@
-import { View } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import { getPokemonType } from '@/constants/pokemonTypes';
-import PokemonSprite from '@/components/ui/PokemonSprite';
+import { View } from "react-native";
+import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
+import { getPokemonType } from "@/constants/pokemonTypes";
+import PokemonSprite from "@/components/ui/PokemonSprite";
 import {
   GLOW_SIZE,
   SPRITE_SIZE,
   pokemonDetailStyles,
-} from '@/components/pokemon-detail/pokemonDetailStyles';
+} from "@/components/pokemon-detail/pokemonDetailStyles";
 
 type Props = {
   pokemonId: number;
@@ -14,7 +14,11 @@ type Props = {
   primaryType: string;
 };
 
-export default function PokemonSpriteHero({ pokemonId, imageUrl, primaryType }: Props) {
+export default function PokemonSpriteHero({
+  pokemonId,
+  imageUrl,
+  primaryType,
+}: Props) {
   const glowColor = getPokemonType(primaryType).color;
   const glowId = `sprite-glow-${pokemonId}`;
   const glowRadius = GLOW_SIZE / 2;
@@ -34,7 +38,12 @@ export default function PokemonSpriteHero({ pokemonId, imageUrl, primaryType }: 
             <Stop offset="100%" stopColor={glowColor} stopOpacity={0} />
           </RadialGradient>
         </Defs>
-        <Circle cx={glowRadius} cy={glowRadius} r={glowRadius} fill={`url(#${glowId})`} />
+        <Circle
+          cx={glowRadius}
+          cy={glowRadius}
+          r={glowRadius}
+          fill={`url(#${glowId})`}
+        />
       </Svg>
       <PokemonSprite imageUrl={imageUrl} size={SPRITE_SIZE} />
     </View>

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import { View, type StyleProp, type ViewStyle } from 'react-native';
-import { usePokemonList } from '@/hooks/usePokemonList';
-import type { PokemonListItem } from '@/types/pokemon';
-import PokemonPickerListContent from '@/components/pokemon-picker/PokemonPickerListContent';
-import PokemonPickerListStates from '@/components/pokemon-picker/PokemonPickerListStates';
-import { pokemonPickerStyles } from '@/components/pokemon-picker/pokemonPickerStyles';
+import { useEffect } from "react";
+import { View, type StyleProp, type ViewStyle } from "react-native";
+import { usePokemonList } from "@/hooks/usePokemonList";
+import type { PokemonListItem } from "@/types/pokemon";
+import PokemonPickerListContent from "@/components/pokemon-picker/PokemonPickerListContent";
+import PokemonPickerListStates from "@/components/pokemon-picker/PokemonPickerListStates";
+import { pokemonPickerStyles } from "@/components/pokemon-picker/pokemonPickerStyles";
 
 export type QueryState = {
   isInitialLoading: boolean;
@@ -59,14 +59,20 @@ export default function PokemonPickerList({
 
   if (!isEmbedded && isInitialLoading) {
     return (
-      <View style={style}>
+      <View style={[pokemonPickerStyles.screenList, style]}>
         <PokemonPickerListStates variant="screen" state="loading" />
       </View>
     );
   }
 
   if (!isEmbedded && isError) {
-    return <PokemonPickerListStates variant="screen" state="error" onRetry={refresh} />;
+    return (
+      <PokemonPickerListStates
+        variant="screen"
+        state="error"
+        onRetry={refresh}
+      />
+    );
   }
 
   const listContent = (() => {
@@ -75,7 +81,13 @@ export default function PokemonPickerList({
     }
 
     if (isEmbedded && isError) {
-      return <PokemonPickerListStates variant="embedded" state="error" onRetry={refresh} />;
+      return (
+        <PokemonPickerListStates
+          variant="embedded"
+          state="error"
+          onRetry={refresh}
+        />
+      );
     }
 
     return (
@@ -100,11 +112,19 @@ export default function PokemonPickerList({
 
   if (isEmbedded) {
     return (
-      <View style={[pokemonPickerStyles.embeddedContainer, { height: listHeight }, style]}>
+      <View
+        style={[
+          pokemonPickerStyles.embeddedContainer,
+          { height: listHeight },
+          style,
+        ]}
+      >
         {listContent}
       </View>
     );
   }
 
-  return <View style={[pokemonPickerStyles.screenList, style]}>{listContent}</View>;
+  return (
+    <View style={[pokemonPickerStyles.screenList, style]}>{listContent}</View>
+  );
 }

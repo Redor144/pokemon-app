@@ -1,13 +1,13 @@
-import { memo, useCallback } from 'react';
-import { View, Pressable, Text, StyleSheet } from 'react-native';
-import { commonStyles } from '@/styles/common';
-import { colors, radius, spacing, typography } from '@/constants/theme';
-import { HP_LABEL } from '@/constants/pokemonStats';
-import type { PokemonListItem } from '@/types/pokemon';
-import { Heart } from 'lucide-react-native';
-import PokemonSprite from '@/components/ui/PokemonSprite';
-import TypeBadge from '@/components/ui/TypeBadge';
-import StatProgressBar from '@/components/ui/StatProgressBar';
+import { memo, useCallback } from "react";
+import { View, Pressable, Text, StyleSheet } from "react-native";
+import { commonStyles } from "@/styles/common";
+import { colors, radius, spacing, typography } from "@/constants/theme";
+import { HP_LABEL } from "@/constants/pokemonStats";
+import type { PokemonListItem } from "@/types/pokemon";
+import { Heart } from "lucide-react-native";
+import PokemonSprite from "@/components/ui/PokemonSprite";
+import TypeBadge from "@/components/ui/TypeBadge";
+import StatProgressBar from "@/components/ui/StatProgressBar";
 
 const MAX_HP = 255;
 
@@ -21,7 +21,7 @@ type Props = {
 };
 
 function formatId(id: number): string {
-  return `#${String(id).padStart(3, '0')}`;
+  return `#${String(id).padStart(3, "0")}`;
 }
 
 function PokemonListRow({
@@ -46,12 +46,18 @@ function PokemonListRow({
           isSelected && styles.selectionShellSelected,
         ]}
       >
-        <View style={[commonStyles.row, styles.row, disabled && styles.disabled]}>
+        <View
+          style={[commonStyles.row, styles.row, disabled && styles.disabled]}
+        >
           <PokemonSprite imageUrl={pokemon.imageUrl} size={56} />
           <View style={styles.info}>
             <View style={styles.nameRow}>
-              <Text style={[typography.pokemonName, styles.name]}>{pokemon.name}</Text>
-              {isFavorite && <Heart color={colors.primary} size={14} fill={colors.primary} />}
+              <Text style={[typography.pokemonName, styles.name]}>
+                {pokemon.name}
+              </Text>
+              {isFavorite && (
+                <Heart color={colors.primary} size={14} fill={colors.primary} />
+              )}
             </View>
             <Text style={typography.pokemonId}>{formatId(pokemon.id)}</Text>
             {disabled && disabledLabel ? (
@@ -67,7 +73,9 @@ function PokemonListRow({
 
           <View style={styles.right}>
             <View style={styles.hpBlock}>
-              <Text style={styles.hpLabel}>{HP_LABEL} {pokemon.hp}</Text>
+              <Text style={styles.hpLabel}>
+                {HP_LABEL} {pokemon.hp}
+              </Text>
               <StatProgressBar percent={hpPercent} />
             </View>
           </View>
@@ -82,7 +90,7 @@ export default memo(PokemonListRow);
 const styles = StyleSheet.create({
   selectionShell: {
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: "transparent",
     borderRadius: radius.lg + 2,
     marginBottom: spacing.md,
   },
@@ -101,18 +109,18 @@ const styles = StyleSheet.create({
     color: colors.mutedForeground,
   },
   info: { flex: 1, gap: 2 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  name: { textTransform: 'capitalize' },
+  nameRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs },
+  name: { textTransform: "capitalize" },
   typeRow: { marginTop: spacing.xs },
   right: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
   },
   hpBlock: { width: 72, gap: spacing.md },
   hpLabel: {
     ...typography.mono,
     marginBottom: spacing.xs,
-    textAlign: 'right',
+    textAlign: "right",
   },
 });

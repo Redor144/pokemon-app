@@ -1,6 +1,6 @@
-import { StyleSheet, View } from 'react-native';
-import PokemonSprite from '@/components/ui/PokemonSprite';
-import type { PokemonListItem } from '@/types/pokemon';
+import { StyleSheet, View } from "react-native";
+import PokemonSprite from "@/components/ui/PokemonSprite";
+import type { PokemonListItem } from "@/types/pokemon";
 
 export type BboxRect = {
   left: number;
@@ -15,7 +15,11 @@ type Props = {
   onSpriteReady?: () => void;
 };
 
-export default function ObjectSpriteOverlay({ rect, pokemon, onSpriteReady }: Props) {
+export default function ObjectSpriteOverlay({
+  rect,
+  pokemon,
+  onSpriteReady,
+}: Props) {
   const spriteSize = Math.max(rect.width, rect.height);
 
   return (
@@ -43,8 +47,8 @@ export default function ObjectSpriteOverlay({ rect, pokemon, onSpriteReady }: Pr
 
 const styles = StyleSheet.create({
   container: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

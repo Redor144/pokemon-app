@@ -1,26 +1,26 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from "react-native";
 import {
   ATTACK_LABEL,
   DEFENSE_LABEL,
   HP_LABEL,
   SPEED_LABEL,
-} from '@/constants/pokemonStats';
-import { commonStyles } from '@/styles/common';
-import type { PokemonListItem } from '@/types/pokemon';
-import PokemonStatRow from '@/components/pokemon-detail/PokemonStatRow';
-import PokemonSpriteHero from '@/components/pokemon-detail/PokemonSpriteHero';
-import { pokemonDetailStyles } from '@/components/pokemon-detail/pokemonDetailStyles';
-import TypeBadge from '@/components/ui/TypeBadge';
+} from "@/constants/pokemonStats";
+import { commonStyles } from "@/styles/common";
+import type { PokemonListItem } from "@/types/pokemon";
+import PokemonStatRow from "@/components/pokemon-detail/PokemonStatRow";
+import PokemonSpriteHero from "@/components/pokemon-detail/PokemonSpriteHero";
+import { pokemonDetailStyles } from "@/components/pokemon-detail/pokemonDetailStyles";
+import TypeBadge from "@/components/ui/TypeBadge";
 
 function formatId(id: number) {
-  return `#${String(id).padStart(3, '0')}`;
+  return `#${String(id).padStart(3, "0")}`;
 }
 
 type ActionProps = {
   label: string;
   onPress: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'destructive';
+  variant?: "primary" | "destructive";
 };
 
 type Props = {
@@ -30,7 +30,7 @@ type Props = {
 
 export default function PokemonDetailContent({ pokemon, action }: Props) {
   const actionStyles =
-    action?.variant === 'destructive'
+    action?.variant === "destructive"
       ? [commonStyles.primaryButton, pokemonDetailStyles.destructiveButton]
       : [commonStyles.primaryButton, pokemonDetailStyles.actionButton];
 
@@ -40,7 +40,7 @@ export default function PokemonDetailContent({ pokemon, action }: Props) {
       <PokemonSpriteHero
         pokemonId={pokemon.id}
         imageUrl={pokemon.imageUrl}
-        primaryType={pokemon.types[0] ?? 'normal'}
+        primaryType={pokemon.types[0] ?? "normal"}
       />
       <Text style={pokemonDetailStyles.name}>{pokemon.name}</Text>
 
@@ -69,7 +69,8 @@ export default function PokemonDetailContent({ pokemon, action }: Props) {
           <Text
             style={[
               commonStyles.primaryButtonText,
-              action.variant === 'destructive' && pokemonDetailStyles.destructiveButtonText,
+              action.variant === "destructive" &&
+                pokemonDetailStyles.destructiveButtonText,
             ]}
           >
             {action.label}

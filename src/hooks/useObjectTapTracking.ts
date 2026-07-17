@@ -1,20 +1,23 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Platform } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
-import { scheduleOnRN } from 'react-native-worklets';
-import type { Detection } from 'react-native-executorch';
-import { useFrameOutput, type Frame } from 'react-native-vision-camera';
-import { saveFramePreviewAsync } from '@/components/camera/cameraUtils';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Platform } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
+import type { Detection } from "react-native-executorch";
+import { useFrameOutput, type Frame } from "react-native-vision-camera";
+import { saveFramePreviewAsync } from "@/components/camera/cameraUtils";
 import {
   imageBboxToViewRect,
   viewPointToImagePoint,
   type Bbox,
-} from '@/components/camera/previewCoords';
-import { bboxesAreClose, pickTrackedDetection } from '@/components/camera/objectTracking';
-import { TRACK_MISS_LIMIT } from '@/components/camera/cameraConstants';
-import { usePreviewLayout } from '@/hooks/usePreviewLayout';
+} from "@/components/camera/previewCoords";
+import {
+  bboxesAreClose,
+  pickTrackedDetection,
+} from "@/components/camera/objectTracking";
+import { TRACK_MISS_LIMIT } from "@/components/camera/cameraConstants";
+import { usePreviewLayout } from "@/hooks/usePreviewLayout";
 
-const platformKey = Platform.OS === 'android' ? 'android' : 'ios';
+const platformKey = Platform.OS === "android" ? "android" : "ios";
 const FRAME_SIZE = 320;
 const SCAN_FRAME_STRIDE = { ios: 1, android: 2 } as const;
 const TRACK_FRAME_STRIDE = { ios: 2, android: 4 } as const;
@@ -22,7 +25,12 @@ const UI_UPDATE_INTERVAL_MS = { ios: 80, android: 120 } as const;
 
 const SCAN_FRAME_LIMIT = 15;
 
-export type ObjectTrackingPhase = 'idle' | 'scanning' | 'proposal' | 'tracking' | 'lost';
+export type ObjectTrackingPhase =
+  | "idle"
+  | "scanning"
+  | "proposal"
+  | "tracking"
+  | "lost";
 
 export type ProposalPreview = {
   uri: string;
@@ -42,12 +50,17 @@ type Options = {
 };
 
 export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
-  const [frameDetector, setFrameDetector] = useState<{ run: RunOnFrameFn | null }>({ run: null });
+  const [frameDetector, setFrameDetector] = useState<{
+    run: RunOnFrameFn | null;
+  }>({ run: null });
   const [frameSize, setFrameSize] = useState({ width: 0, height: 0 });
   const [trackedBbox, setTrackedBbox] = useState<Bbox | null>(null);
-  const [phase, setPhase] = useState<ObjectTrackingPhase>('idle');
-  const [pendingDetection, setPendingDetection] = useState<Detection | null>(null);
-  const [proposalPreview, setProposalPreview] = useState<ProposalPreview | null>(null);
+  const [phase, setPhase] = useState<ObjectTrackingPhase>("idle");
+  const [pendingDetection, setPendingDetection] = useState<Detection | null>(
+    null,
+  );
+  const [proposalPreview, setProposalPreview] =
+    useState<ProposalPreview | null>(null);
   const [lostLabel, setLostLabel] = useState<string | null>(null);
   const { previewLayout, handlePreviewLayout } = usePreviewLayout();
 
@@ -57,7 +70,7 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
   const trackedLabelRef = useRef<string | null>(null);
   const missCountRef = useRef(0);
   const pendingDetectionRef = useRef<Detection | null>(null);
-  const phaseRef = useRef<ObjectTrackingPhase>('idle');
+  const phaseRef = useRef<ObjectTrackingPhase>("idle");
   const scanFrameCountRef = useRef(0);
   const lastUiUpdateRef = useRef(0);
   const isProcessingFrames = useSharedValue(false);
@@ -69,13 +82,14 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
     (nextPhase: ObjectTrackingPhase) => {
       phaseRef.current = nextPhase;
       setPhase(nextPhase);
-      isProcessingFrames.value = nextPhase === 'scanning' || nextPhase === 'tracking';
-      isScanning.value = nextPhase === 'scanning';
+      isProcessingFrames.value =
+        nextPhase === "scanning" || nextPhase === "tracking";
+      isScanning.value = nextPhase === "scanning";
       frameCounter.value = 0;
 
-      if (nextPhase === 'scanning') {
+      if (nextPhase === "scanning") {
         frameStride.value = SCAN_FRAME_STRIDE[platformKey];
-      } else if (nextPhase === 'tracking') {
+      } else if (nextPhase === "tracking") {
         frameStride.value = TRACK_FRAME_STRIDE[platformKey];
       }
     },
@@ -97,20 +111,19 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
       if (!detection) {
         setProposalPreview(null);
       }
-      setPhaseState('proposal');
+      setPhaseState("proposal");
     },
     [setPhaseState],
   );
 
   const processScanFrame = useCallback(
     async (frame: Frame, detections: Detection[]) => {
-      if (phaseRef.current !== 'scanning') {
+      if (phaseRef.current !== "scanning") {
         frame.dispose();
         return;
       }
 
-      const frameWidth = frame.height;
-      const frameHeight = frame.width;
+      const { width: frameWidth, height: frameHeight } = frame;
 
       if (frameSize.width !== frameWidth || frameSize.height !== frameHeight) {
         setFrameSize({ width: frameWidth, height: frameHeight });
@@ -155,6 +168,14 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
     [frameSize.height, frameSize.width, openProposal],
   );
 
+  const clearTracking = useCallback(() => {
+    trackedBboxRef.current = null;
+    trackedLabelRef.current = null;
+    missCountRef.current = 0;
+    setTrackedBbox(null);
+    setLostLabel(null);
+  }, []);
+
   const processFrameDetections = useCallback(
     (detections: Detection[], frameWidth: number, frameHeight: number) => {
       const currentPhase = phaseRef.current;
@@ -163,7 +184,7 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
         setFrameSize({ width: frameWidth, height: frameHeight });
       }
 
-      if (currentPhase !== 'tracking') {
+      if (currentPhase !== "tracking") {
         return;
       }
 
@@ -201,19 +222,17 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
         return;
       }
 
-      setLostLabel(trackedLabelRef.current);
-      trackedBboxRef.current = null;
-      trackedLabelRef.current = null;
-      missCountRef.current = 0;
-      setTrackedBbox(null);
-      setPhaseState('lost');
+      const label = trackedLabelRef.current;
+      clearTracking();
+      setLostLabel(label);
+      setPhaseState("lost");
     },
-    [frameSize.height, frameSize.width, setPhaseState],
+    [frameSize.height, frameSize.width, setPhaseState, clearTracking],
   );
 
   const onFrame = useCallback(
     (frame: Frame) => {
-      'worklet';
+      "worklet";
 
       if (!frameDetector.run || !isProcessingFrames.value) {
         frame.dispose();
@@ -238,7 +257,12 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
         }
 
         // Sensor frames are landscape-native; swap dimensions inline (worklets can't call RN functions).
-        scheduleOnRN(processFrameDetections, detections, frame.height, frame.width);
+        scheduleOnRN(
+          processFrameDetections,
+          detections,
+          frame.height,
+          frame.width,
+        );
         frame.dispose();
       } catch {
         frame.dispose();
@@ -256,7 +280,7 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
   );
 
   const frameOutput = useFrameOutput({
-    pixelFormat: 'rgb',
+    pixelFormat: "rgb",
     enablePreviewSizedOutputBuffers: true,
     targetResolution: {
       width: FRAME_SIZE,
@@ -268,19 +292,15 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
 
   const startScan = useCallback(
     (locationX: number, locationY: number) => {
+      clearTracking();
       pendingTapRef.current = { x: locationX, y: locationY };
       scanFrameCountRef.current = 0;
-      trackedBboxRef.current = null;
-      trackedLabelRef.current = null;
-      missCountRef.current = 0;
-      setTrackedBbox(null);
-      setLostLabel(null);
       pendingDetectionRef.current = null;
       setPendingDetection(null);
       setProposalPreview(null);
-      setPhaseState('scanning');
+      setPhaseState("scanning");
     },
-    [setPhaseState],
+    [setPhaseState, clearTracking],
   );
 
   const handleTap = useCallback(
@@ -296,7 +316,7 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
 
       const currentPhase = phaseRef.current;
 
-      if (currentPhase !== 'idle' && currentPhase !== 'tracking') {
+      if (currentPhase !== "idle" && currentPhase !== "tracking") {
         return;
       }
 
@@ -325,39 +345,31 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
     pendingDetectionRef.current = null;
     setPendingDetection(null);
     setProposalPreview(null);
-    setPhaseState('tracking');
+    setPhaseState("tracking");
   }, [setPhaseState]);
 
   const dismissProposal = useCallback(() => {
-    if (phaseRef.current !== 'proposal') {
+    if (phaseRef.current !== "proposal") {
       return;
     }
 
-    trackedBboxRef.current = null;
-    trackedLabelRef.current = null;
-    missCountRef.current = 0;
-    setTrackedBbox(null);
-    setLostLabel(null);
+    clearTracking();
     pendingDetectionRef.current = null;
     setPendingDetection(null);
     setProposalPreview(null);
     pendingTapRef.current = null;
     scanFrameCountRef.current = 0;
-    setPhaseState('idle');
-  }, [setPhaseState]);
+    setPhaseState("idle");
+  }, [setPhaseState, clearTracking]);
 
   const dismissLost = useCallback(() => {
-    if (phaseRef.current !== 'lost') {
+    if (phaseRef.current !== "lost") {
       return;
     }
 
-    trackedBboxRef.current = null;
-    trackedLabelRef.current = null;
-    missCountRef.current = 0;
-    setTrackedBbox(null);
-    setLostLabel(null);
-    setPhaseState('idle');
-  }, [setPhaseState]);
+    clearTracking();
+    setPhaseState("idle");
+  }, [setPhaseState, clearTracking]);
 
   const pauseFrameProcessing = useCallback(() => {
     isProcessingFrames.value = false;
@@ -365,13 +377,14 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
 
   const resumeFrameProcessing = useCallback(() => {
     const currentPhase = phaseRef.current;
-    isProcessingFrames.value = currentPhase === 'scanning' || currentPhase === 'tracking';
+    isProcessingFrames.value =
+      currentPhase === "scanning" || currentPhase === "tracking";
   }, [isProcessingFrames]);
 
   const bboxRect = useMemo(() => {
     const hasFrameSize = frameSize.width > 0 && frameSize.height > 0;
 
-    if (!trackedBbox || !hasFrameSize || phase !== 'tracking') {
+    if (!trackedBbox || !hasFrameSize || phase !== "tracking") {
       return null;
     }
 
@@ -379,7 +392,7 @@ export function useObjectTapTracking({ runOnFrame, isModelReady }: Options) {
   }, [frameSize, phase, previewLayout, trackedBbox]);
 
   const getTrackedViewRect = useCallback(() => {
-    if (phaseRef.current !== 'tracking' || !trackedBboxRef.current) {
+    if (phaseRef.current !== "tracking" || !trackedBboxRef.current) {
       return null;
     }
 
