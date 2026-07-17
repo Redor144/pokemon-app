@@ -37,8 +37,17 @@ yarn-error.*
 *.tsbuildinfo
 
 # generated native folders
-/ios
-/android
+/ios/*
+!/ios/PrivacyProtectorTurbo/
+!/ios/PrivacyProtectorTurbo/**
+/android/*
+!/android/app/
+!/android/app/src/
+!/android/app/src/main/
+!/android/app/src/main/java/
+!/android/app/src/main/java/com/
+!/android/app/src/main/java/com/privacyprotectorturbo/
+!/android/app/src/main/java/com/privacyprotectorturbo/**
 
 # agent
 .cursor/
@@ -55,3 +64,7 @@ CLAUDE.md
 
 # logs
 *.log
+
+# Android build artifacts
+modules/**/android/.gradle/
+modules/**/android/build/

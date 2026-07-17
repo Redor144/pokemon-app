@@ -67,7 +67,7 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="pokemon-list"
-        options={tabBarNavOptions(POKEDEX_LABEL, List, { title: POKEDEX_TITLE, subtitle: POKEDEX_SUBTITLE, },
+        options={tabBarNavOptions(POKEDEX_LABEL, List, { title: POKEDEX_TITLE, subtitle: POKEDEX_SUBTITLE }, { counter: true },
         )}
       />
       <Tabs.Screen

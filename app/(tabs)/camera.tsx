@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useCallback } from 'react';
 import { View } from 'react-native';
 import CameraActionControls from '@/components/camera/CameraActionControls';
 import CameraModeSelector from '@/components/camera/CameraModeSelector';
@@ -11,8 +11,21 @@ import { usePhotoCapture } from '@/hooks/usePhotoCapture';
 import { commonStyles } from '@/styles/common';
 import type { CameraFacing, CameraPreviewRef, DetectionMode } from '@/types/camera';
 import type { PokemonListItem } from '@/types/pokemon';
+import { useFocusEffect } from 'expo-router';
+// import PrivacyProtector from 'privacy-protector/src/PrivacyProtectorModule'
+import PrivacyProtectorTurbo from '../../specs/NativePrivacyProtectorTurbo';
 
 export default function CameraScreen() {
+  useFocusEffect(
+    useCallback(() => {
+      PrivacyProtectorTurbo.enablePrivacyProtector();
+
+      return () => {
+        PrivacyProtectorTurbo.disablePrivacyProtector();
+      }
+    }, []),
+  );
+
   const [mode, setMode] = useState<DetectionMode>('face');
   const [facing, setFacing] = useState<CameraFacing>('back');
   const isObjectMode = mode === 'object';

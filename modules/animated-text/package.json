@@ -1,0 +1,5 @@
+{
+    "name": "animated-text",
+    "version": "1.0.0",
+    "main": "src/AnimatedTextView.tsx"
+  }
