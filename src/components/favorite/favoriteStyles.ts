@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, fonts, radius, spacing, typography } from '@/constants/theme';
+import { StyleSheet } from "react-native";
+import { colors, fonts, radius, spacing, typography } from "@/constants/theme";
 
 export const favoriteStyles = StyleSheet.create({
   card: {
@@ -7,7 +7,7 @@ export const favoriteStyles = StyleSheet.create({
     borderRadius: radius.xl,
     borderColor: colors.border,
     borderWidth: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
     paddingBottom: spacing.xl,
     marginTop: spacing.xl,
     marginHorizontal: spacing.md,
@@ -16,12 +16,12 @@ export const favoriteStyles = StyleSheet.create({
     ...typography.heading,
     fontFamily: fonts.nunitoBold,
     marginTop: spacing.lg,
-    textAlign: 'center',
+    textAlign: "center",
   },
   emptyCaption: {
     ...typography.caption,
     marginTop: spacing.sm,
-    textAlign: 'center',
+    textAlign: "center",
     maxWidth: 260,
   },
 });

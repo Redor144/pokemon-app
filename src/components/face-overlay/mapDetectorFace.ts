@@ -1,5 +1,5 @@
-import type { Face } from 'react-native-vision-camera-face-detector';
-import type { DetectedFace } from '@/components/face-overlay/faceOverlayTypes';
+import type { Face } from "react-native-vision-camera-face-detector";
+import type { DetectedFace } from "@/components/face-overlay/faceOverlayTypes";
 
 function mapDetectorFace(face: Face): DetectedFace {
   return {

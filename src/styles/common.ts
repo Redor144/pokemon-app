@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, fonts, radius, spacing, typography } from '../constants/theme';
+import { StyleSheet } from "react-native";
+import { colors, fonts, radius, spacing, typography } from "../constants/theme";
 
 export const commonStyles = StyleSheet.create({
   screen: {
@@ -8,25 +8,25 @@ export const commonStyles = StyleSheet.create({
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: colors.background,
     padding: spacing.xl,
   },
   centerContent: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,
     padding: spacing.xl,
-    alignItems: 'center',
+    alignItems: "center",
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: spacing.md,
     borderWidth: 1,
     borderColor: colors.border,
@@ -36,13 +36,13 @@ export const commonStyles = StyleSheet.create({
   },
   title: {
     ...typography.heading,
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   backdrop: {
     flex: 1,
     backgroundColor: colors.overlay,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: spacing.xl,
   },
   listContent: {
@@ -50,18 +50,18 @@ export const commonStyles = StyleSheet.create({
   },
   footerCaption: {
     ...typography.caption,
-    textAlign: 'center',
+    textAlign: "center",
     margin: spacing.lg,
   },
   typeRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: spacing.xs,
   },
   typeBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
     gap: spacing.xs,
     paddingHorizontal: spacing.sm,
     paddingVertical: 3,
@@ -76,7 +76,7 @@ export const commonStyles = StyleSheet.create({
   progressTrack: {
     backgroundColor: colors.muted,
     borderRadius: radius.full,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   progressTrackSm: {
     height: 4,
@@ -85,16 +85,16 @@ export const commonStyles = StyleSheet.create({
     height: 6,
   },
   progressFill: {
-    height: '100%',
+    height: "100%",
     backgroundColor: colors.stat,
     borderRadius: radius.full,
   },
   primaryButton: {
-    width: '100%',
+    width: "100%",
     backgroundColor: colors.primary,
     borderRadius: radius.xl,
     paddingVertical: spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
   },
   primaryButtonText: {
     fontFamily: fonts.nunitoBold,
@@ -110,8 +110,8 @@ export const commonStyles = StyleSheet.create({
     borderTopRightRadius: radius.xl,
   },
   sheetContent: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.md,
     gap: spacing.md,

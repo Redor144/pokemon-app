@@ -1,23 +1,23 @@
-import { forwardRef, useCallback, useRef } from 'react';
-import { Platform, View } from 'react-native';
+import { forwardRef, useCallback, useRef } from "react";
+import { Platform, View } from "react-native";
 import {
   Camera as FaceDetectionCamera,
   type Face,
-} from 'react-native-vision-camera-face-detector';
-import FaceOverlay from '@/components/face-overlay/FaceOverlay';
-import type { FaceOverlayRef } from '@/components/face-overlay/faceOverlayTypes';
-import { mapDetectorFaces } from '@/components/face-overlay/mapDetectorFace';
-import { mirrorFacesHorizontally } from '@/components/face-overlay/mirrorFacesHorizontally';
-import CameraPreviewGate from '@/components/camera/CameraPreviewGate';
+} from "react-native-vision-camera-face-detector";
+import FaceOverlay from "@/components/face-overlay/FaceOverlay";
+import type { FaceOverlayRef } from "@/components/face-overlay/faceOverlayTypes";
+import { mapDetectorFaces } from "@/components/face-overlay/mapDetectorFace";
+import { mirrorFacesHorizontally } from "@/components/face-overlay/mirrorFacesHorizontally";
+import CameraPreviewGate from "@/components/camera/CameraPreviewGate";
 import PhotoOverlayCompositor, {
   type PhotoOverlayCompositorRef,
-} from '@/components/camera/PhotoOverlayCompositor';
-import { cameraStyles } from '@/components/camera/cameraStyles';
-import { useCameraCaptureHandle } from '@/hooks/useCameraCaptureHandle';
-import { useCameraPreviewState } from '@/hooks/useCameraPreviewState';
-import { usePreviewLayout } from '@/hooks/usePreviewLayout';
-import type { CameraFacing, CameraPreviewRef } from '@/types/camera';
-import type { PokemonListItem } from '@/types/pokemon';
+} from "@/components/camera/PhotoOverlayCompositor";
+import { cameraStyles } from "@/components/camera/cameraStyles";
+import { useCameraCaptureHandle } from "@/hooks/useCameraCaptureHandle";
+import { useCameraPreviewState } from "@/hooks/useCameraPreviewState";
+import { usePreviewLayout } from "@/hooks/usePreviewLayout";
+import type { CameraFacing, CameraPreviewRef } from "@/types/camera";
+import type { PokemonListItem } from "@/types/pokemon";
 
 const FACE_UPDATE_INTERVAL_MS = 200;
 
@@ -28,7 +28,8 @@ type Props = {
 
 const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
   function FaceDetectionCameraPreview({ facing, overlayPokemon }, ref) {
-    const { isActive, hasPermission, requestPermission, device } = useCameraPreviewState(facing);
+    const { isActive, hasPermission, requestPermission, device } =
+      useCameraPreviewState(facing);
     const { previewLayout, handlePreviewLayout } = usePreviewLayout();
     const faceOverlayRef = useRef<FaceOverlayRef>(null);
     const compositorRef = useRef<PhotoOverlayCompositorRef>(null);
@@ -48,7 +49,7 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
         }
 
         if (!compositorRef.current) {
-          throw new Error('Photo compositor is not ready.');
+          throw new Error("Photo compositor is not ready.");
         }
 
         return compositorRef.current.composite({
@@ -56,7 +57,7 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
           faces,
           pokemon: overlayPokemon,
           size: previewLayout,
-          mirrorSprites: Platform.OS === 'ios' && facing === 'front',
+          mirrorSprites: Platform.OS === "ios" && facing === "front",
         });
       },
       [facing, overlayPokemon, previewLayout],
@@ -65,7 +66,7 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
     const photoOutput = useCameraCaptureHandle({
       ref,
       processCapturedUri,
-      photoOptions: { containerFormat: 'jpeg' },
+      photoOptions: { containerFormat: "jpeg" },
     });
 
     const handleFacesDetected = useCallback(
@@ -79,8 +80,11 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
         lastUpdate.current = now;
 
         let displayFaces = mapDetectorFaces(detectedFaces);
-        if (Platform.OS === 'ios' && facing === 'back') {
-          displayFaces = mirrorFacesHorizontally(displayFaces, previewLayout.width);
+        if (Platform.OS === "ios" && facing === "back") {
+          displayFaces = mirrorFacesHorizontally(
+            displayFaces,
+            previewLayout.width,
+          );
         }
         faceOverlayRef.current?.updateFaces(displayFaces);
       },
@@ -97,7 +101,10 @@ const FaceDetectionCameraPreview = forwardRef<CameraPreviewRef, Props>(
         requestPermission={requestPermission}
         device={device}
       >
-        <View style={cameraStyles.previewContainer} onLayout={handlePreviewLayout}>
+        <View
+          style={cameraStyles.previewContainer}
+          onLayout={handlePreviewLayout}
+        >
           <FaceDetectionCamera
             style={cameraStyles.cameraView}
             device={device!}

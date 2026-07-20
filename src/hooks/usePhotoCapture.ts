@@ -1,8 +1,8 @@
-import { Asset, requestPermissionsAsync } from 'expo-media-library';
-import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
-import { toFileUri } from '@/components/camera/cameraUtils';
-import type { CameraPreviewRef } from '@/types/camera';
+import { Asset, requestPermissionsAsync } from "expo-media-library";
+import { useCallback, useState } from "react";
+import { Alert } from "react-native";
+import { toFileUri } from "@/components/camera/cameraUtils";
+import type { CameraPreviewRef } from "@/types/camera";
 
 type Params = {
   cameraRef: React.RefObject<CameraPreviewRef | null>;
@@ -20,16 +20,19 @@ export function usePhotoCapture({ cameraRef }: Params) {
       const uri = await cameraRef.current.captureForSave();
 
       const { status } = await requestPermissionsAsync(true);
-      if (status !== 'granted') {
-        Alert.alert('Permission required', 'Allow photo library access to save photos.');
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission required",
+          "Allow photo library access to save photos.",
+        );
         return;
       }
 
       await Asset.create(toFileUri(uri));
-      Alert.alert('Saved', 'Photo saved to your library.');
+      Alert.alert("Saved", "Photo saved to your library.");
     } catch (error) {
       console.error(error);
-      Alert.alert('Capture failed', 'Could not save the photo. Try again.');
+      Alert.alert("Capture failed", "Could not save the photo. Try again.");
     } finally {
       setIsCapturing(false);
     }

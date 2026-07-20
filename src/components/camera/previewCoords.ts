@@ -19,7 +19,10 @@ type ViewRect = {
 };
 
 function getCoverTransform(viewSize: Size, imageSize: Size) {
-  const scale = Math.max(viewSize.width / imageSize.width, viewSize.height / imageSize.height);
+  const scale = Math.max(
+    viewSize.width / imageSize.width,
+    viewSize.height / imageSize.height,
+  );
   const displayedWidth = imageSize.width * scale;
   const displayedHeight = imageSize.height * scale;
 
@@ -44,7 +47,11 @@ export function viewPointToImagePoint(
   };
 }
 
-export function imageBboxToViewRect(bbox: Bbox, viewSize: Size, imageSize: Size): ViewRect {
+export function imageBboxToViewRect(
+  bbox: Bbox,
+  viewSize: Size,
+  imageSize: Size,
+): ViewRect {
   const { scale, offsetX, offsetY } = getCoverTransform(viewSize, imageSize);
 
   return {

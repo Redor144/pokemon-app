@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["PrivacyProtectorModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.privacyprotector.PrivacyProtectorModule"]
+  }
+}

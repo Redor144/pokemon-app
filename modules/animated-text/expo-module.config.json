@@ -1,0 +1,16 @@
+{
+  "platforms": [
+    "apple",
+    "android"
+  ],
+  "apple": {
+    "modules": [
+      "AnimatedTextModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "expo.modules.animatedtext.AnimatedTextModule"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+{
+    "name": "privacy-protector",
+    "version": "1.0.0",
+    "main": "src/PrivacyProtectorModule.ts"
+  }

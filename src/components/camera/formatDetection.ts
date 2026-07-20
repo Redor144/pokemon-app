@@ -1,9 +1,9 @@
 export function formatDetectionLabel(label: string) {
   return label
     .toLowerCase()
-    .split('_')
+    .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .join(" ");
 }
 
 export function formatDetectionConfidence(score: number) {

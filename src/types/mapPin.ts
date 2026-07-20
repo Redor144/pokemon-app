@@ -1,4 +1,4 @@
-import type { PokemonListItem } from '@/types/pokemon';
+import type { PokemonListItem } from "@/types/pokemon";
 
 export type MapPin = {
   id: string;

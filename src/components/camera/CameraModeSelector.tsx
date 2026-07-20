@@ -1,9 +1,9 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, radius, spacing } from '@/constants/theme';
-import type { DetectionMode } from '@/types/camera';
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { colors, fonts, radius, spacing } from "@/constants/theme";
+import type { DetectionMode } from "@/types/camera";
 
-const FACE_DETECTION_LABEL = 'Face Detection';
-const OBJECT_DETECT_LABEL = 'Object Detect';
+const FACE_DETECTION_LABEL = "Face Detection";
+const OBJECT_DETECT_LABEL = "Object Detect";
 
 type Props = {
   mode: DetectionMode;
@@ -14,22 +14,32 @@ export default function CameraModeSelector({ mode, onModeChange }: Props) {
   return (
     <View style={styles.segmentedControl}>
       <Pressable
-        style={[styles.segment, mode === 'face' && styles.segmentActive]}
-        onPress={() => onModeChange('face')}
+        style={[styles.segment, mode === "face" && styles.segmentActive]}
+        onPress={() => onModeChange("face")}
         accessibilityRole="button"
-        accessibilityState={{ selected: mode === 'face' }}
+        accessibilityState={{ selected: mode === "face" }}
       >
-        <Text style={[styles.segmentText, mode === 'face' && styles.segmentTextActive]}>
+        <Text
+          style={[
+            styles.segmentText,
+            mode === "face" && styles.segmentTextActive,
+          ]}
+        >
           {FACE_DETECTION_LABEL}
         </Text>
       </Pressable>
       <Pressable
-        style={[styles.segment, mode === 'object' && styles.segmentActive]}
-        onPress={() => onModeChange('object')}
+        style={[styles.segment, mode === "object" && styles.segmentActive]}
+        onPress={() => onModeChange("object")}
         accessibilityRole="button"
-        accessibilityState={{ selected: mode === 'object' }}
+        accessibilityState={{ selected: mode === "object" }}
       >
-        <Text style={[styles.segmentText, mode === 'object' && styles.segmentTextActive]}>
+        <Text
+          style={[
+            styles.segmentText,
+            mode === "object" && styles.segmentTextActive,
+          ]}
+        >
           {OBJECT_DETECT_LABEL}
         </Text>
       </Pressable>
@@ -39,7 +49,7 @@ export default function CameraModeSelector({ mode, onModeChange }: Props) {
 
 const styles = StyleSheet.create({
   segmentedControl: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginHorizontal: spacing.md,
     marginVertical: spacing.lg,
     padding: spacing.xs,
@@ -50,8 +60,8 @@ const styles = StyleSheet.create({
   },
   segment: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderRadius: radius.full,

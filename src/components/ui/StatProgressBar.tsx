@@ -1,7 +1,12 @@
-import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Canvas, LinearGradient, RoundedRect, vec } from '@shopify/react-native-skia';
-import { colors } from '@/constants/theme';
+import { useState } from "react";
+import { StyleSheet, View } from "react-native";
+import {
+  Canvas,
+  LinearGradient,
+  RoundedRect,
+  vec,
+} from "@shopify/react-native-skia";
+import { colors } from "@/constants/theme";
 
 const TRACK_HEIGHT = 6;
 const TRACK_RADIUS = TRACK_HEIGHT / 2;
@@ -32,7 +37,13 @@ export default function StatProgressBar({ percent }: Props) {
             color={colors.muted}
           />
           {fillWidth > 0 && (
-            <RoundedRect x={0} y={0} width={fillWidth} height={TRACK_HEIGHT} r={TRACK_RADIUS}>
+            <RoundedRect
+              x={0}
+              y={0}
+              width={fillWidth}
+              height={TRACK_HEIGHT}
+              r={TRACK_RADIUS}
+            >
               <LinearGradient
                 start={vec(0, 0)}
                 end={vec(width, 0)}

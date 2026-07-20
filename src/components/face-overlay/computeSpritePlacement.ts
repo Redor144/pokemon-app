@@ -1,4 +1,4 @@
-import type { DetectedFace } from '@/components/face-overlay/faceOverlayTypes';
+import type { DetectedFace } from "@/components/face-overlay/faceOverlayTypes";
 
 const SPRITE_SIZE_RATIO = 0.95;
 const SPRITE_ABOVE_RATIO = 0.7;

@@ -1,13 +1,19 @@
-import { useCallback, useMemo } from 'react';
-import { ActivityIndicator, RefreshControl, Text, type StyleProp, type ViewStyle } from 'react-native';
-import { FlashList, type ListRenderItem } from '@shopify/flash-list';
-import { commonStyles } from '@/styles/common';
-import { colors } from '@/constants/theme';
-import type { PokemonListItem } from '@/types/pokemon';
-import PokemonListRow from '@/components/pokemon-picker/PokemonListRow';
-import { pokemonPickerStyles } from '@/components/pokemon-picker/pokemonPickerStyles';
+import { useCallback, useMemo } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  Text,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
+import { FlashList, type ListRenderItem } from "@shopify/flash-list";
+import { commonStyles } from "@/styles/common";
+import { colors } from "@/constants/theme";
+import type { PokemonListItem } from "@/types/pokemon";
+import PokemonListRow from "@/components/pokemon-picker/PokemonListRow";
+import { pokemonPickerStyles } from "@/components/pokemon-picker/pokemonPickerStyles";
 
-const NO_MORE_POKEMON_TITLE = 'No more Pokémon';
+const NO_MORE_POKEMON_TITLE = "No more Pokémon";
 
 type Props = {
   pokemonList: PokemonListItem[];
@@ -42,7 +48,10 @@ export default function PokemonPickerListContent({
   onLoadMore,
   onRefresh,
 }: Props) {
-  const keyExtractor = useCallback((item: PokemonListItem) => item.id.toString(), []);
+  const keyExtractor = useCallback(
+    (item: PokemonListItem) => item.id.toString(),
+    [],
+  );
 
   const renderItem: ListRenderItem<PokemonListItem> = useCallback(
     ({ item }) => (
@@ -69,7 +78,9 @@ export default function PokemonPickerListContent({
       );
     }
     if (showEndOfListFooter && !hasMore && pokemonList.length > 0) {
-      return <Text style={commonStyles.footerCaption}>{NO_MORE_POKEMON_TITLE}</Text>;
+      return (
+        <Text style={commonStyles.footerCaption}>{NO_MORE_POKEMON_TITLE}</Text>
+      );
     }
     return null;
   }, [hasMore, isFetchingNextPage, showEndOfListFooter, pokemonList.length]);

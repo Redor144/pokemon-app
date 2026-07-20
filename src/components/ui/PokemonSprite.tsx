@@ -1,8 +1,14 @@
-import { memo } from 'react';
-import { StyleSheet, View, type ImageStyle, type StyleProp, type ViewStyle } from 'react-native';
-import { Image } from 'expo-image';
-import { ImageOff } from 'lucide-react-native';
-import { colors, radius } from '@/constants/theme';
+import { memo } from "react";
+import {
+  StyleSheet,
+  View,
+  type ImageStyle,
+  type StyleProp,
+  type ViewStyle,
+} from "react-native";
+import { Image } from "expo-image";
+import { ImageOff } from "lucide-react-native";
+import { colors, radius } from "@/constants/theme";
 
 type Props = {
   imageUrl: string;
@@ -40,7 +46,7 @@ const styles = StyleSheet.create({
   placeholder: {
     backgroundColor: colors.muted,
     borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

@@ -1,6 +1,6 @@
-import { useCallback, useRef, useState } from 'react';
-import { useMapPins } from '@/contexts/MapPinsContext';
-import type { MapPin } from '@/types/mapPin';
+import { useCallback, useRef, useState } from "react";
+import { useMapPins } from "@/contexts/MapPinsContext";
+import type { MapPin } from "@/types/mapPin";
 
 type MapPressEvent = {
   nativeEvent: { coordinate: { latitude: number; longitude: number } };

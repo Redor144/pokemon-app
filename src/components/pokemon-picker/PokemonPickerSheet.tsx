@@ -1,11 +1,11 @@
-import { forwardRef, useCallback, useImperativeHandle, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
-import { typography } from '@/constants/theme';
-import type { PokemonListItem } from '@/types/pokemon';
-import PokemonPickerList from '@/components/pokemon-picker/PokemonPickerList';
-import ModalSheetContainer from '@/components/sheets/ModalSheetContainer';
-import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
-import { useModalBottomSheet } from '@/hooks/useModalBottomSheet';
+import { forwardRef, useCallback, useImperativeHandle, useState } from "react";
+import { StyleSheet, Text } from "react-native";
+import { typography } from "@/constants/theme";
+import type { PokemonListItem } from "@/types/pokemon";
+import PokemonPickerList from "@/components/pokemon-picker/PokemonPickerList";
+import ModalSheetContainer from "@/components/sheets/ModalSheetContainer";
+import { useFavoritePokemon } from "@/contexts/FavoritePokemonContext";
+import { useModalBottomSheet } from "@/hooks/useModalBottomSheet";
 
 export type PokemonPickerSheetRef = {
   open: () => void;
@@ -18,12 +18,13 @@ type Props = {
 };
 
 const LIST_HEIGHT = 280;
-const CHOOSE_POKEMON_TITLE = 'Choose Pokémon';
+const CHOOSE_POKEMON_TITLE = "Choose Pokémon";
 
 const PokemonPickerSheet = forwardRef<PokemonPickerSheetRef, Props>(
   ({ selectedId, onSelect }, ref) => {
     const { favorite } = useFavoritePokemon();
-    const { index, isOpen, requestOpen, close, handleIndexChange } = useModalBottomSheet();
+    const { index, isOpen, requestOpen, close, handleIndexChange } =
+      useModalBottomSheet();
 
     const handleSelect = useCallback(
       (pokemon: PokemonListItem) => {
@@ -57,16 +58,16 @@ const PokemonPickerSheet = forwardRef<PokemonPickerSheetRef, Props>(
   },
 );
 
-PokemonPickerSheet.displayName = 'PokemonPickerSheet';
+PokemonPickerSheet.displayName = "PokemonPickerSheet";
 
 export default PokemonPickerSheet;
 
 const styles = StyleSheet.create({
   sheetContent: {
-    alignItems: 'stretch',
+    alignItems: "stretch",
   },
   title: {
     ...typography.heading,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

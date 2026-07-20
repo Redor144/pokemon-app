@@ -1,11 +1,17 @@
-import { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import type { MapPin } from '@/types/mapPin';
-import type { PokemonListItem } from '@/types/pokemon';
-import MapPinAssignContent from '@/components/map/MapPinAssignContent';
-import PokemonDetailContent from '@/components/pokemon-detail/PokemonDetailContent';
-import ModalSheetContainer from '@/components/sheets/ModalSheetContainer';
-import { useModalBottomSheet } from '@/hooks/useModalBottomSheet';
+import {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from "react";
+import { StyleSheet } from "react-native";
+import type { MapPin } from "@/types/mapPin";
+import type { PokemonListItem } from "@/types/pokemon";
+import MapPinAssignContent from "@/components/map/MapPinAssignContent";
+import PokemonDetailContent from "@/components/pokemon-detail/PokemonDetailContent";
+import ModalSheetContainer from "@/components/sheets/ModalSheetContainer";
+import { useModalBottomSheet } from "@/hooks/useModalBottomSheet";
 
 export type MapPinSheetRef = {
   open: (pin: MapPin) => void;
@@ -20,11 +26,17 @@ type Props = {
   onSelectionChange?: (pinId: string | null) => void;
 };
 
-const DELETE_PIN_LABEL = 'Delete pin';
+const DELETE_PIN_LABEL = "Delete pin";
 
 const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
   (
-    { pins, assignedPokemonIds, onAssignPokemon, onDeletePin, onSelectionChange },
+    {
+      pins,
+      assignedPokemonIds,
+      onAssignPokemon,
+      onDeletePin,
+      onSelectionChange,
+    },
     ref,
   ) => {
     const [selectedPin, setSelectedPin] = useState<MapPin | null>(null);
@@ -38,17 +50,12 @@ const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
       return pins.find((pin) => pin.id === selectedPin.id) ?? selectedPin;
     }, [pins, selectedPin]);
 
-    const {
-      index,
-      requestOpen,
-      close,
-      handleIndexChange,
-      handleSettle,
-    } = useModalBottomSheet({
-      shouldOpen: selectedPin !== null,
-      onClearSelection: clearSelection,
-      onSettleClosed: () => setSelectedPin(null),
-    });
+    const { index, requestOpen, close, handleIndexChange, handleSettle } =
+      useModalBottomSheet({
+        shouldOpen: selectedPin !== null,
+        onClearSelection: clearSelection,
+        onSettleClosed: () => setSelectedPin(null),
+      });
 
     const closeSheet = close;
 
@@ -89,7 +96,7 @@ const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
             action={{
               label: DELETE_PIN_LABEL,
               onPress: handleDeletePin,
-              variant: 'destructive',
+              variant: "destructive",
             }}
           />
         )}
@@ -107,13 +114,13 @@ const MapPinSheet = forwardRef<MapPinSheetRef, Props>(
   },
 );
 
-MapPinSheet.displayName = 'MapPinSheet';
+MapPinSheet.displayName = "MapPinSheet";
 
 export default MapPinSheet;
 
 const styles = StyleSheet.create({
   sheetContent: {
-    width: '100%',
-    alignItems: 'stretch',
+    width: "100%",
+    alignItems: "stretch",
   },
 });

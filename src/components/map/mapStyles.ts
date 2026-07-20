@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
-import { colors, radius, spacing } from '@/constants/theme';
+import { StyleSheet } from "react-native";
+import { colors, radius, spacing } from "@/constants/theme";
 
 export const mapStyles = StyleSheet.create({
   mapCard: {
@@ -10,7 +10,7 @@ export const mapStyles = StyleSheet.create({
     borderColor: colors.border,
     marginHorizontal: spacing.md,
     marginVertical: spacing.xl,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   map: {
     ...StyleSheet.absoluteFill,

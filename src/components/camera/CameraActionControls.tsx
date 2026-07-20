@@ -1,10 +1,14 @@
-import { Pressable, StyleSheet, View } from 'react-native';
-import { colors, radius, spacing } from '@/constants/theme';
-import { Camera as CameraIcon, Sparkles, SwitchCamera } from 'lucide-react-native';
+import { Pressable, StyleSheet, View } from "react-native";
+import { colors, radius, spacing } from "@/constants/theme";
+import {
+  Camera as CameraIcon,
+  Sparkles,
+  SwitchCamera,
+} from "lucide-react-native";
 
-const SWITCH_CAMERA_ACCESSIBILITY_LABEL = 'Switch camera';
-const CAPTURE_PHOTO_ACCESSIBILITY_LABEL = 'Capture photo';
-const CHOOSE_POKEMON_ACCESSIBILITY_LABEL = 'Choose Pokémon';
+const SWITCH_CAMERA_ACCESSIBILITY_LABEL = "Switch camera";
+const CAPTURE_PHOTO_ACCESSIBILITY_LABEL = "Capture photo";
+const CHOOSE_POKEMON_ACCESSIBILITY_LABEL = "Choose Pokémon";
 
 type Props = {
   isCameraToggleDisabled?: boolean;
@@ -40,16 +44,23 @@ export default function CameraActionControls({
       </View>
 
       <View style={styles.cameraActionColumn}>
-      <Pressable
-        style={[styles.shutterButton, isCapturing && styles.shutterButtonDisabled]}
-        onPress={onCapture}
-        disabled={isCapturing}
-        accessibilityRole="button"
-        accessibilityLabel={CAPTURE_PHOTO_ACCESSIBILITY_LABEL}
-        accessibilityState={{ disabled: isCapturing }}
-      >
+        <Pressable
+          style={[
+            styles.shutterButton,
+            isCapturing && styles.shutterButtonDisabled,
+          ]}
+          onPress={onCapture}
+          disabled={isCapturing}
+          accessibilityRole="button"
+          accessibilityLabel={CAPTURE_PHOTO_ACCESSIBILITY_LABEL}
+          accessibilityState={{ disabled: isCapturing }}
+        >
           <View style={styles.shutterInnerRing} pointerEvents="none" />
-          <CameraIcon size={28} color={colors.primaryForeground} strokeWidth={2.25} />
+          <CameraIcon
+            size={28}
+            color={colors.primaryForeground}
+            strokeWidth={2.25}
+          />
         </Pressable>
       </View>
 
@@ -69,15 +80,15 @@ export default function CameraActionControls({
 
 const styles = StyleSheet.create({
   cameraActionControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginHorizontal: spacing.md,
     marginBottom: spacing.lg,
   },
   cameraActionColumn: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   sideActionButton: {
     width: 48,
@@ -86,8 +97,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.controlBackground,
     borderWidth: 1,
     borderColor: colors.controlBorder,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   sideActionButtonDisabled: {
     opacity: 0.45,
@@ -97,8 +108,8 @@ const styles = StyleSheet.create({
     height: 72,
     borderRadius: radius.full,
     backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.55,

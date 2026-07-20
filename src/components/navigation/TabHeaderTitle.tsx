@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { spacing, typography } from '@/constants/theme';
+import { View, Text, StyleSheet } from "react-native";
+import { spacing, typography } from "@/constants/theme";
 
 type Props = {
   title: string;
@@ -25,8 +25,8 @@ export function TabHeaderTitle({ title, subtitle }: Props) {
 
 const styles = StyleSheet.create({
   root: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs,
   },
   textBlock: {
@@ -39,6 +39,6 @@ const styles = StyleSheet.create({
   subtitle: {
     ...typography.caption,
     marginTop: 1,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
 });

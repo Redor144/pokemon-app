@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, radius, spacing } from '@/constants/theme';
+import { StyleSheet, Text, View } from "react-native";
+import { colors, fonts, radius, spacing } from "@/constants/theme";
 
 type Props = {
   text: string;
@@ -15,7 +15,7 @@ export default function SelectionHint({ text }: Props) {
 
 const styles = StyleSheet.create({
   selectionHint: {
-    position: 'absolute',
+    position: "absolute",
     top: spacing.md,
     left: spacing.md,
     right: spacing.md,
@@ -25,13 +25,13 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     zIndex: 1,
   },
   selectionHintText: {
     fontFamily: fonts.nunitoBold,
     fontSize: 13,
     color: colors.foreground,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });

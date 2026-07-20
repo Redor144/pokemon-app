@@ -1,8 +1,14 @@
-import { View, Text, StyleSheet, type ColorValue, Animated } from 'react-native';
-import Svg, { Circle, Defs, RadialGradient, Stop } from 'react-native-svg';
-import type { LucideIcon } from 'lucide-react-native';
-import { colors, typography } from '@/constants/theme';
-import { useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  type ColorValue,
+  Animated,
+} from "react-native";
+import Svg, { Circle, Defs, RadialGradient, Stop } from "react-native-svg";
+import type { LucideIcon } from "lucide-react-native";
+import { colors, typography } from "@/constants/theme";
+import { useRef, useEffect } from "react";
 
 const ICON_SIZE = 22;
 const FLARE_SIZE = 50;
@@ -47,16 +53,32 @@ export function TabBarNavButton({
           >
             <Defs>
               <RadialGradient id={flareId} cx="50%" cy="50%" rx="50%" ry="50%">
-                <Stop offset="0%" stopColor={colors.primary} stopOpacity={0.45} />
-                <Stop offset="55%" stopColor={colors.primary} stopOpacity={0.12} />
-                <Stop offset="100%" stopColor={colors.primary} stopOpacity={0} />
+                <Stop
+                  offset="0%"
+                  stopColor={colors.primary}
+                  stopOpacity={0.45}
+                />
+                <Stop
+                  offset="55%"
+                  stopColor={colors.primary}
+                  stopOpacity={0.12}
+                />
+                <Stop
+                  offset="100%"
+                  stopColor={colors.primary}
+                  stopOpacity={0}
+                />
               </RadialGradient>
             </Defs>
             <Circle cx={half} cy={half} r={half} fill={`url(#${flareId})`} />
           </Svg>
         ) : null}
         <Animated.View style={{ transform: [{ scale: scale }] }}>
-          <Icon color={color} size={ICON_SIZE} fill={filled ? color : 'transparent'}/>
+          <Icon
+            color={color}
+            size={ICON_SIZE}
+            fill={filled ? color : "transparent"}
+          />
         </Animated.View>
       </View>
 
@@ -73,16 +95,16 @@ export function TabBarNavButton({
 
 const styles = StyleSheet.create({
   root: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: 64,
     paddingTop: 4,
   },
   iconWrap: {
     width: FLARE_SIZE,
     height: FLARE_SIZE,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   flare: {
     ...StyleSheet.absoluteFill,
@@ -94,8 +116,8 @@ const styles = StyleSheet.create({
   dotSlot: {
     height: DOT_SIZE + 4,
     marginTop: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   dot: {
     width: DOT_SIZE,

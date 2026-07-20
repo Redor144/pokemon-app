@@ -1,18 +1,21 @@
-import type { LucideIcon } from 'lucide-react-native';
-import { View, StyleSheet, type ColorValue } from 'react-native';
-import { TabBarNavButton } from '@/components/navigation/TabBarNavButton';
-import { TabScreenHeader, type TabScreenHeaderOptions } from '@/components/navigation/TabScreenHeader';
-import { colors, spacing } from '@/constants/theme';
+import type { LucideIcon } from "lucide-react-native";
+import { View, StyleSheet, type ColorValue } from "react-native";
+import { TabBarNavButton } from "@/components/navigation/TabBarNavButton";
+import {
+  TabScreenHeader,
+  type TabScreenHeaderOptions,
+} from "@/components/navigation/TabScreenHeader";
+import { colors, spacing } from "@/constants/theme";
+import AnimatedTextView from "animated-text";
 
 const HEADER_ICON_SIZE = 18;
 const CIRCLE_SIZE = 36;
 
-type TabHeaderIconVariant = 'primary' | 'secondary';
+type TabHeaderIconVariant = "primary" | "secondary";
 
 type TabHeaderConfig = {
   title: string;
   subtitle: string;
-  icon?: LucideIcon;
 };
 
 const headerIconCircle = {
@@ -31,7 +34,7 @@ const headerIconCircle = {
 export function TabHeaderIcon({
   icon: Icon,
   filled,
-  variant = 'primary',
+  variant = "primary",
 }: {
   icon: LucideIcon;
   filled: boolean;
@@ -60,6 +63,25 @@ export function TabHeaderIcon({
   );
 }
 
+export function TabHeaderCounter({
+  value,
+  remountKey = 0,
+}: {
+  value: number;
+  remountKey?: number;
+}) {
+  return (
+    <View style={styles.counterWrap}>
+      <AnimatedTextView
+        key={remountKey}
+        value={value}
+        color={colors.primary}
+        style={styles.counterText}
+      />
+    </View>
+  );
+}
+
 export function tabBarNavOptions(
   label: string,
   icon: LucideIcon,
@@ -75,13 +97,6 @@ export function tabBarNavOptions(
         options={props.options}
       />
     ),
-    headerRight: header.icon ? () => (
-      <TabHeaderIcon
-        icon={header.icon!}
-        filled={options?.filled ?? false}
-        variant={options?.filled ? 'secondary' : 'primary'}
-      />
-    ) :undefined,
     tabBarIcon: ({
       focused,
       color,
@@ -110,7 +125,20 @@ const styles = StyleSheet.create({
     height: CIRCLE_SIZE,
     borderRadius: CIRCLE_SIZE / 2,
     borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  counterWrap: {
+    flexShrink: 0,
+    minWidth: 120,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  counterText: {
+    minWidth: 80,
+    height: 60,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

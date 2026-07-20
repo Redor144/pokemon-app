@@ -1,8 +1,14 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, spacing, typography } from '@/constants/theme';
-import { commonStyles } from '@/styles/common';
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { colors, fonts, spacing, typography } from "@/constants/theme";
+import { commonStyles } from "@/styles/common";
 
-const DEFAULT_ACTION_LABEL = 'Retry';
+const DEFAULT_ACTION_LABEL = "Retry";
 
 type Props = {
   title?: string;
@@ -42,8 +48,8 @@ export default function FeatureCardPlaceholder({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: spacing.lg,
     gap: spacing.sm,
   },
@@ -51,16 +57,16 @@ const styles = StyleSheet.create({
     fontFamily: fonts.nunitoBold,
     fontSize: 16,
     color: colors.foreground,
-    textAlign: 'center',
+    textAlign: "center",
   },
   caption: {
     ...typography.caption,
-    textAlign: 'center',
+    textAlign: "center",
     maxWidth: 260,
   },
   actionButton: {
     ...commonStyles.primaryButton,
-    width: 'auto',
+    width: "auto",
     paddingHorizontal: spacing.xl,
     marginTop: spacing.sm,
   },

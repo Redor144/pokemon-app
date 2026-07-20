@@ -1,10 +1,19 @@
-import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import PokemonSprite from '@/components/ui/PokemonSprite';
-import { computeSpritePlacement } from '@/components/face-overlay/computeSpritePlacement';
-import type { DetectedFace, FaceOverlayRef } from '@/components/face-overlay/faceOverlayTypes';
-import type { PokemonListItem } from '@/types/pokemon';
-
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import { StyleSheet, View } from "react-native";
+import PokemonSprite from "@/components/ui/PokemonSprite";
+import { computeSpritePlacement } from "@/components/face-overlay/computeSpritePlacement";
+import type {
+  DetectedFace,
+  FaceOverlayRef,
+} from "@/components/face-overlay/faceOverlayTypes";
+import type { PokemonListItem } from "@/types/pokemon";
 
 type Props = {
   pokemon: PokemonListItem | null;
@@ -44,7 +53,10 @@ const FaceOverlay = memo(
 
     const handleSpriteLoad = (index: number) => {
       loadedSpriteIndicesRef.current.add(index);
-      if (onSpritesReady && loadedSpriteIndicesRef.current.size >= displayFaces.length) {
+      if (
+        onSpritesReady &&
+        loadedSpriteIndicesRef.current.size >= displayFaces.length
+      ) {
         onSpritesReady();
       }
     };
@@ -73,7 +85,9 @@ const FaceOverlay = memo(
               <PokemonSprite
                 imageUrl={pokemon.imageUrl}
                 size={placement.size}
-                onLoad={onSpritesReady ? () => handleSpriteLoad(index) : undefined}
+                onLoad={
+                  onSpritesReady ? () => handleSpriteLoad(index) : undefined
+                }
               />
             </View>
           );
@@ -90,6 +104,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
   },
   sprite: {
-    position: 'absolute',
+    position: "absolute",
   },
 });

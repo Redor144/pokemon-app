@@ -1,9 +1,9 @@
-import { Platform, StyleSheet, View } from 'react-native';
-import { Marker } from 'react-native-maps';
-import { Heart, MapPin } from 'lucide-react-native';
-import { colors, radius } from '@/constants/theme';
-import type { MapPin as MapPinData } from '@/types/mapPin';
-import PokemonSprite from '@/components/ui/PokemonSprite';
+import { Platform, StyleSheet, View } from "react-native";
+import { Marker } from "react-native-maps";
+import { Heart, MapPin } from "lucide-react-native";
+import { colors, radius } from "@/constants/theme";
+import type { MapPin as MapPinData } from "@/types/mapPin";
+import PokemonSprite from "@/components/ui/PokemonSprite";
 
 const MARKER_SPRITE_SIZE = 36;
 
@@ -14,8 +14,12 @@ type Props = {
   onPress: (pin: MapPinData) => void;
 };
 
-export default function MapPinMarker({ pin, isSelected, isFavorite, onPress }: Props) {
-
+export default function MapPinMarker({
+  pin,
+  isSelected,
+  isFavorite,
+  onPress,
+}: Props) {
   return (
     <Marker
       coordinate={{ latitude: pin.latitude, longitude: pin.longitude }}
@@ -41,7 +45,12 @@ export default function MapPinMarker({ pin, isSelected, isFavorite, onPress }: P
           )}
         </View>
         {isFavorite && (
-          <View style={[styles.favoriteBadge, isSelected && styles.favoriteBadgeSelected]}>
+          <View
+            style={[
+              styles.favoriteBadge,
+              isSelected && styles.favoriteBadgeSelected,
+            ]}
+          >
             <Heart color={colors.primary} size={10} fill={colors.primary} />
           </View>
         )}
@@ -52,11 +61,11 @@ export default function MapPinMarker({ pin, isSelected, isFavorite, onPress }: P
 
 const styles = StyleSheet.create({
   markerWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     minWidth: 48,
     minHeight: 48,
-    overflow: 'visible',
+    overflow: "visible",
     ...Platform.select({
       android: { paddingTop: 2, paddingRight: 2 },
     }),
@@ -69,7 +78,7 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   favoriteBadge: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 0,
     backgroundColor: colors.card,
@@ -77,9 +86,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.primary,
     padding: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'visible',
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "visible",
   },
   favoriteBadgeSelected: {
     borderColor: colors.secondary,
@@ -88,8 +97,8 @@ const styles = StyleSheet.create({
   markerEmpty: {
     width: 36,
     height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 0,
   },
   markerSelected: {

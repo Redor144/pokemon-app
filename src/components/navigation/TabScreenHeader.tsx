@@ -1,8 +1,8 @@
-import type { ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TabHeaderTitle } from '@/components/navigation/TabHeaderTitle';
-import { colors, spacing } from '@/constants/theme';
+import type { ReactNode } from "react";
+import { StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TabHeaderTitle } from "@/components/navigation/TabHeaderTitle";
+import { colors, spacing } from "@/constants/theme";
 
 export type TabScreenHeaderOptions = {
   headerRight?: (props: {
@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingLeft: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.md,

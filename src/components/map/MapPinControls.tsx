@@ -1,12 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { MapPin, Plus, X } from 'lucide-react-native';
-import SelectionHint from '@/components/ui/SelectionHint';
-import { colors, fonts, radius, spacing } from '@/constants/theme';
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { MapPin, Plus, X } from "lucide-react-native";
+import SelectionHint from "@/components/ui/SelectionHint";
+import { colors, fonts, radius, spacing } from "@/constants/theme";
 
-const SELECTION_HINT = 'Tap on the map to place a pin';
-const ADD_PIN_LABEL = 'Add pin';
-const CANCEL_LABEL = 'Cancel';
-const CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL = 'Cancel pin placement';
+const SELECTION_HINT = "Tap on the map to place a pin";
+const ADD_PIN_LABEL = "Add pin";
+const CANCEL_LABEL = "Cancel";
+const CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL = "Cancel pin placement";
 
 type Props = {
   isSelectingLocation: boolean;
@@ -32,7 +32,9 @@ export default function MapPinControls({
         onPress={onAddPinPress}
         accessibilityRole="button"
         accessibilityLabel={
-          isSelectingLocation ? CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL : ADD_PIN_LABEL
+          isSelectingLocation
+            ? CANCEL_PIN_PLACEMENT_ACCESSIBILITY_LABEL
+            : ADD_PIN_LABEL
         }
       >
         {isSelectingLocation ? (
@@ -57,17 +59,17 @@ export default function MapPinControls({
 
 const styles = StyleSheet.create({
   addButton: {
-    position: 'absolute',
+    position: "absolute",
     right: spacing.md,
     bottom: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs,
     backgroundColor: colors.primary,
     borderRadius: radius.full,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
@@ -85,11 +87,11 @@ const styles = StyleSheet.create({
     color: colors.primaryForeground,
   },
   pinCount: {
-    position: 'absolute',
+    position: "absolute",
     left: spacing.md,
     bottom: spacing.md,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.xs,
     backgroundColor: colors.card,
     borderRadius: radius.full,

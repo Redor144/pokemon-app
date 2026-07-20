@@ -1,17 +1,17 @@
-import { useCallback, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fonts, spacing, typography } from '@/constants/theme';
-import { commonStyles } from '@/styles/common';
-import { useFavoritePokemon } from '@/contexts/FavoritePokemonContext';
-import type { MapPin } from '@/types/mapPin';
-import type { PokemonListItem } from '@/types/pokemon';
-import PokemonPickerList from '@/components/pokemon-picker/PokemonPickerList';
+import { useCallback, useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { colors, fonts, spacing, typography } from "@/constants/theme";
+import { commonStyles } from "@/styles/common";
+import { useFavoritePokemon } from "@/contexts/FavoritePokemonContext";
+import type { MapPin } from "@/types/mapPin";
+import type { PokemonListItem } from "@/types/pokemon";
+import PokemonPickerList from "@/components/pokemon-picker/PokemonPickerList";
 
 const LIST_HEIGHT = 280;
-const ON_ANOTHER_PIN_LABEL = 'On another pin';
-const DELETE_PIN_LABEL = 'Delete pin';
-const NEW_PIN_TITLE = 'New pin';
-const ASSIGN_POKEMON_LABEL = 'Assign Pokémon';
+const ON_ANOTHER_PIN_LABEL = "On another pin";
+const DELETE_PIN_LABEL = "Delete pin";
+const NEW_PIN_TITLE = "New pin";
+const ASSIGN_POKEMON_LABEL = "Assign Pokémon";
 
 type Props = {
   pin: MapPin;
@@ -31,13 +31,19 @@ export default function MapPinAssignContent({
   onDelete,
 }: Props) {
   const { favorite } = useFavoritePokemon();
-  const [selectedPokemon, setSelectedPokemon] = useState<PokemonListItem | null>(null);
-  const [queryState, setQueryState] = useState({ isInitialLoading: true, isError: false });
+  const [selectedPokemon, setSelectedPokemon] =
+    useState<PokemonListItem | null>(null);
+  const [queryState, setQueryState] = useState({
+    isInitialLoading: true,
+    isError: false,
+  });
 
   const handlePokemonPress = useCallback(
     (pokemon: PokemonListItem) => {
       if (assignedPokemonIds.has(pokemon.id)) return;
-      setSelectedPokemon((current) => (current?.id === pokemon.id ? null : pokemon));
+      setSelectedPokemon((current) =>
+        current?.id === pokemon.id ? null : pokemon,
+      );
     },
     [assignedPokemonIds],
   );
@@ -84,11 +90,16 @@ export default function MapPinAssignContent({
         onPress={handleAssignPokemon}
         disabled={!canAssign}
       >
-        <Text style={commonStyles.primaryButtonText}>{ASSIGN_POKEMON_LABEL}</Text>
+        <Text style={commonStyles.primaryButtonText}>
+          {ASSIGN_POKEMON_LABEL}
+        </Text>
       </Pressable>
 
       <Pressable
-        style={({ pressed }) => [styles.deleteButton, pressed && styles.buttonPressed]}
+        style={({ pressed }) => [
+          styles.deleteButton,
+          pressed && styles.buttonPressed,
+        ]}
         onPress={onDelete}
       >
         <Text style={styles.deleteButtonText}>{DELETE_PIN_LABEL}</Text>
@@ -100,15 +111,15 @@ export default function MapPinAssignContent({
 const styles = StyleSheet.create({
   title: {
     ...typography.heading,
-    textAlign: 'center',
+    textAlign: "center",
   },
   subtitle: {
     ...typography.caption,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: spacing.xs,
   },
   listContainer: {
-    width: '100%',
+    width: "100%",
     marginTop: spacing.md,
   },
   buttonPressed: {
@@ -117,7 +128,7 @@ const styles = StyleSheet.create({
   deleteButton: {
     borderRadius: spacing.xl,
     paddingVertical: spacing.md,
-    alignItems: 'center',
+    alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.muted,

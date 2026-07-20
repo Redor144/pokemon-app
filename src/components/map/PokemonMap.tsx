@@ -1,15 +1,18 @@
-import { View } from 'react-native';
-import MapView from 'react-native-maps';
-import type { MapPin } from '@/types/mapPin';
-import FeatureCardPlaceholder from '@/components/ui/FeatureCardPlaceholder';
-import MapPinControls from '@/components/map/MapPinControls';
-import MapPinMarker from '@/components/map/MapPinMarker';
-import { CRACOW_REGION, type MapPressEvent } from '@/components/map/mapConstants';
-import { mapStyles } from '@/components/map/mapStyles';
-import { useMapLoadState } from '@/components/map/useMapLoadState';
+import { View } from "react-native";
+import MapView from "react-native-maps";
+import type { MapPin } from "@/types/mapPin";
+import FeatureCardPlaceholder from "@/components/ui/FeatureCardPlaceholder";
+import MapPinControls from "@/components/map/MapPinControls";
+import MapPinMarker from "@/components/map/MapPinMarker";
+import {
+  CRACOW_REGION,
+  type MapPressEvent,
+} from "@/components/map/mapConstants";
+import { mapStyles } from "@/components/map/mapStyles";
+import { useMapLoadState } from "@/components/map/useMapLoadState";
 
-const MAP_UNAVAILABLE_TITLE = 'Map Unavailable';
-const LOADING_MAP_TITLE = 'Loading Map…';
+const MAP_UNAVAILABLE_TITLE = "Map Unavailable";
+const LOADING_MAP_TITLE = "Loading Map…";
 
 type Props = {
   pins: MapPin[];
@@ -34,7 +37,7 @@ export default function PokemonMap({
 }: Props) {
   const { loadState, handleMapReady } = useMapLoadState();
 
-  if (loadState === 'unavailable') {
+  if (loadState === "unavailable") {
     return (
       <View style={mapStyles.mapCard}>
         <FeatureCardPlaceholder title={MAP_UNAVAILABLE_TITLE} />
@@ -54,10 +57,10 @@ export default function PokemonMap({
         onPress={onMapPress}
         onLongPress={onMapLongPress}
       >
-        {loadState === 'ready' &&
+        {loadState === "ready" &&
           pins.map((pin) => (
             <MapPinMarker
-              key={`${pin.id}-${pin.pokemon?.id ?? 'empty'}-${selectedPinId === pin.id}`}
+              key={`${pin.id}-${pin.pokemon?.id ?? "empty"}-${selectedPinId === pin.id}`}
               pin={pin}
               isSelected={selectedPinId === pin.id}
               isFavorite={pin.pokemon !== null && isFavorite(pin.pokemon.id)}
@@ -66,13 +69,13 @@ export default function PokemonMap({
           ))}
       </MapView>
 
-      {loadState === 'loading' && (
+      {loadState === "loading" && (
         <View style={mapStyles.loadingOverlay}>
           <FeatureCardPlaceholder title={LOADING_MAP_TITLE} loading />
         </View>
       )}
 
-      {loadState === 'ready' && (
+      {loadState === "ready" && (
         <MapPinControls
           isSelectingLocation={isSelectingLocation}
           pinCount={pins.length}
